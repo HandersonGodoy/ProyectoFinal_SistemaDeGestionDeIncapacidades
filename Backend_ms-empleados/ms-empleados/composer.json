@@ -1,0 +1,10 @@
+{
+    "name": "blanc/ms-empleados",
+    "authors": [
+        {
+            "name": "HandersonGodoy",
+            "email": "hfblanco@uniboyaca.edu.co"
+        }
+    ],
+    "require": {}
+}
