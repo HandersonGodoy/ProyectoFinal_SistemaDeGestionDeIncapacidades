@@ -1,0 +1,82 @@
+Inicio: Crear base de Datos y verificar
+
+cd C:\xampp\mysql\bin && mysql.exe -u root < "C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\setup.sql"                    
+
+mysql.exe -u root -e "SHOW DATABASES;"
+
+
+
+
+
+
+Doble click en el instalar para crear:Entrar a cada carpeta (Backend_ms-auth, Backend_ms-empleados, etc.)
+Ejecutar composer install (descarga Slim, Eloquent, etc.)
+Copiar .env.example a .env
+
+
+Si no se crea el .env o no aparece el texto es este:
+
+Backend_ms-auth\ms-auth\.env:
+
+DB_HOST=localhost
+DB_NAME=db_auth
+DB_USER=root
+DB_PASS=
+
+
+Backend_ms-empleados\ms-empleados\.env:
+
+DB_HOST=localhost
+DB_NAME=db_empleados
+DB_USER=root
+DB_PASS=
+
+
+Backend_ms-incapacidades\ms-incapacidades\.env:
+
+DB_HOST=localhost
+DB_NAME=db_incapacidades
+DB_USER=root
+DB_PASS=
+
+
+Backend_ms-seguimiento\ms-seguimiento\.env:
+env
+DB_HOST=localhost
+DB_NAME=db_seguimiento
+DB_USER=root
+DB_PASS=
+
+
+
+
+
+
+
+
+
+Activar Servers:
+
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-auth\ms-auth
+php -S 127.0.0.1:8001 -t public
+
+
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-empleados\ms-empleados
+php -S 127.0.0.1:8002 -t public
+
+
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-incapacidades\ms-incapacidades
+php -S 127.0.0.1:8003 -t public
+
+
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-seguimiento\ms-seguimiento
+php -S 127.0.0.1:8004 -t public
+
+
+
+
+
+
+
+Instalar REST Client
+
