@@ -6,7 +6,6 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Database
 {
-   
     private static ?Capsule $capsule = null;
 
     public static function init(): void
@@ -17,6 +16,7 @@ class Database
 
         self::$capsule = new Capsule();
 
+        // Configurar conexión MySQL con datos del .env
         self::$capsule->addConnection([
             'driver'    => 'mysql',
             'host'      => $_ENV['DB_HOST']      ?? 'localhost',
@@ -29,9 +29,11 @@ class Database
         ]);
 
         self::$capsule->setAsGlobal();
+        
+        // Inicializa Eloquent ORM
         self::$capsule->bootEloquent();
     }
-
+    
     public static function getCapsule(): Capsule
     {
         if (self::$capsule === null) {

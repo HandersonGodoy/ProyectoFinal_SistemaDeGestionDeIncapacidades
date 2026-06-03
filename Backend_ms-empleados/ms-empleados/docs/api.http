@@ -1,0 +1,60 @@
+GET http://127.0.0.1:8002/api/empleados
+Authorization: Bearer TOKEN_AQUI
+
+GET http://127.0.0.1:8002/api/empleados?documento=1000123456
+Authorization: Bearer TOKEN_AQUI
+
+GET http://127.0.0.1:8002/api/empleados?area=Tecnologia
+Authorization: Bearer TOKEN_AQUI
+
+GET http://127.0.0.1:8002/api/empleados?cargo=Analista
+Authorization: Bearer TOKEN_AQUI
+
+GET http://127.0.0.1:8002/api/empleados/1
+Authorization: Bearer TOKEN_AQUI
+
+POST http://127.0.0.1:8002/api/empleados
+Content-Type: application/json
+Authorization: Bearer TOKEN_AQUI
+
+{
+  "nombres": "Juan",
+  "apellidos": "Pérez",
+  "documento": "1000999999",
+  "correo": "juan@empresa.com",
+  "telefono": "3009999999",
+  "cargo": "Desarrollador",
+  "area": "Tecnologia",
+  "fecha_ingreso": "2025-01-01"
+}
+
+PUT http://127.0.0.1:8002/api/empleados/1
+Content-Type: application/json
+Authorization: Bearer TOKEN_AQUI
+
+{
+  "nombres": "Juan Carlos",
+  "apellidos": "Pérez",
+  "documento": "1000999999",
+  "correo": "juan@empresa.com",
+  "telefono": "3009999999",
+  "cargo": "Desarrollador Senior",
+  "area": "Gestion Humana",
+  "fecha_ingreso": "2025-01-01"
+}
+
+PATCH http://127.0.0.1:8002/api/empleados/1/estado
+Content-Type: application/json
+Authorization: Bearer TOKEN_AQUI
+
+{
+  "estado": "inactivo"
+}
+
+PATCH http://127.0.0.1:8002/api/empleados/1/estado
+Content-Type: application/json
+Authorization: Bearer TOKEN_AQUI
+
+{
+  "estado": "activo"
+}
