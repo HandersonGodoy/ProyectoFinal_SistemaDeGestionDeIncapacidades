@@ -27,13 +27,12 @@ class Database
             'prefix'    => '',
         ]);
 
-        
         self::$capsule->setAsGlobal();
         
-        // Inicializa Eloquent
+        // Inicializa Eloquent ORM
         self::$capsule->bootEloquent();
     }
-
+    
     public static function getCapsule(): Capsule
     {
         if (self::$capsule === null) {
