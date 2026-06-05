@@ -1,0 +1,47 @@
+GET http://127.0.0.1:8003/api/incapacidades
+Authorization: Bearer TU_TOKEN
+
+GET http://127.0.0.1:8003/api/incapacidades?estado=aprobada
+Authorization: Bearer TU_TOKEN
+
+### Ver incapacidad
+GET http://127.0.0.1:8003/api/incapacidades/1
+Authorization: Bearer TU_TOKEN
+
+### Crear incapacidad
+POST http://127.0.0.1:8003/api/incapacidades
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+    "empleado_id": 1,
+    "fecha_inicio": "2026-06-20",
+    "fecha_fin": "2026-06-25",
+    "tipo": "enfermedad_general",
+    "diagnostico_general": "Gripe severa",
+    "entidad_medica": "Clinica del Norte",
+    "observaciones": "Reposo absoluto"
+}
+
+PUT http://127.0.0.1:8003/api/incapacidades/3
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+    "observaciones": "Actualizado",
+    "estado": "en_revision"
+}
+
+PATCH http://127.0.0.1:8003/api/incapacidades/3/estado
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+    "estado": "aprobada"
+}
+
+PATCH http://127.0.0.1:8003/api/incapacidades/3/finalizar
+Authorization: Bearer TU_TOKEN
+
+DELETE http://127.0.0.1:8003/api/incapacidades/3
+Authorization: Bearer TU_TOKEN

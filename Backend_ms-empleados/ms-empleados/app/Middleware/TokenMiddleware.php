@@ -22,6 +22,26 @@ class TokenMiddleware
             return $response->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');
         }
+
+        $msAuthUrl = $_ENV['MS_AUTH_URL'] ?? 'http://127.0.0.1:8001';
+        $ch = curl_init("{$msAuthUrl}/api/auth/validar");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer {$token}"]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            $response = new Response();
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'Token inválido o sesión expirada'
+            ]));
+            return $response->withStatus(401)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
         return $handler->handle($request);
     }
 }

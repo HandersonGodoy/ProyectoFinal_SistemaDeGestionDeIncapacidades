@@ -20,6 +20,14 @@ class AuthController
             ->orWhere('correo', $usuarioInput)
             ->first();
 
+        if ($usuario->estado !== 'activo') {
+    $response->getBody()->write(json_encode([
+        'success' => false,
+        'message' => 'Usuario inactivo. Contacte al administrador.'
+    ]));
+    return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
+}
+
         if (!$usuario || $usuario->contrasena !== $contrasena) {
             $response->getBody()->write(json_encode([
                 'success' => false,
