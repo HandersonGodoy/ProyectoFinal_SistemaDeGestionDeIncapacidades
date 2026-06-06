@@ -9,7 +9,7 @@ mysql.exe -u root -e "SHOW DATABASES;"
 
 
 
-Doble click en el instalar para crear:Entrar a cada carpeta (Backend_ms-auth, Backend_ms-empleados, etc.)
+Doble click en el instalar para crear: Entrar a cada carpeta (Backend_ms-auth, Backend_ms-empleados, etc.)
 Ejecutar composer install (descarga Slim, Eloquent, etc.)
 Copiar .env.example a .env
 
@@ -57,26 +57,31 @@ DB_PASS=
 
 Activar Servers:
 
+# Terminal 1
 cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-auth\ms-auth
 php -S 127.0.0.1:8001 -t public
 
-
+# Terminal 2
 cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-empleados\ms-empleados
 php -S 127.0.0.1:8002 -t public
 
-
+# Terminal 3
 cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-incapacidades\ms-incapacidades
 php -S 127.0.0.1:8003 -t public
 
-
+# Terminal 4
 cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-seguimiento\ms-seguimiento
 php -S 127.0.0.1:8004 -t public
 
+# Terminal 5
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades
+php -S localhost:8080
+
+http://localhost:8080
 
 
 
 
 
 
-Instalar REST Client
 

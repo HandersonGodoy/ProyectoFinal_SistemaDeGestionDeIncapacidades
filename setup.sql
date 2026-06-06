@@ -15,7 +15,8 @@ CREATE TABLE usuarios (
 );
 INSERT INTO usuarios (nombre, correo, usuario, contrasena, rol, token, sesion_activa, estado, created_at, updated_at) VALUES
 ('Administrador General', 'admin@empresa.com', 'admin', 'admin123', 'administrador', NULL, FALSE, 'activo', NOW(), NOW()),
-('Analista Gestion Humana', 'gh@empresa.com', 'gestionhumana', 'gh123', 'gestion_humana', NULL, FALSE, 'activo', NOW(), NOW());
+('Analista Gestion Humana', 'gh@empresa.com', 'gestionhumana', 'gh123', 'gestion_humana', NULL, FALSE, 'activo', NOW(), NOW()),
+('Usuario Inactivo', 'inactivo@empresa.com', 'inactivo', 'inactivo123', 'empleado', NULL, FALSE, 'inactivo', NOW(), NOW());
 
 CREATE DATABASE IF NOT EXISTS db_empleados CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE db_empleados;

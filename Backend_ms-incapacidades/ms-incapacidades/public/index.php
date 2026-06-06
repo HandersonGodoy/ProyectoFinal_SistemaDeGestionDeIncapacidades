@@ -23,6 +23,10 @@ $app->add(function ($request, $handler) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
 (require __DIR__ . '/../app/Routes/web.php')($app);
 
 $app->run();
