@@ -1,0 +1,49 @@
+GET http://127.0.0.1:8004/api/seguimientos
+Authorization: Bearer TU_TOKEN
+
+GET http://127.0.0.1:8004/api/seguimientos?incapacidad_id=1
+Authorization: Bearer TU_TOKEN
+
+GET http://127.0.0.1:8004/api/seguimientos?estado=aprobada
+Authorization: Bearer TU_TOKEN
+
+GET http://127.0.0.1:8004/api/seguimientos?fecha=2026-06-01
+Authorization: Bearer TU_TOKEN
+
+GET http://127.0.0.1:8004/api/seguimientos?usuario_responsable=admin
+Authorization: Bearer TU_TOKEN
+
+GET http://127.0.0.1:8004/api/seguimientos/1
+Authorization: Bearer TU_TOKEN
+
+POST http://127.0.0.1:8004/api/seguimientos
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+    "incapacidad_id": 1,
+    "fecha": "2026-06-05",
+    "comentario": "Seguimiento médico realizado",
+    "estado": "en_revision",
+    "usuario_responsable": "gestionhumana"
+}
+
+PUT http://127.0.0.1:8004/api/seguimientos/4
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+    "comentario": "Comentario actualizado",
+    "estado": "aprobada"
+}
+
+PATCH http://127.0.0.1:8004/api/seguimientos/4/estado
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
+    "estado": "finalizada"
+}
+
+DELETE http://127.0.0.1:8004/api/seguimientos/4
+Authorization: Bearer TU_TOKEN
