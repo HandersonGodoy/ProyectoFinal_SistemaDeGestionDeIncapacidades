@@ -10,18 +10,18 @@ echo [DEBUG] Script iniciado correctamente.
 echo [DEBUG] Si ves esto, el batch esta funcionando.
 echo.
 
-:: ============================================================
-:: FORZAR RUTAS DE PHP Y COMPOSER
-:: ============================================================
+rem ============================================================
+rem FORZAR RUTAS DE PHP Y COMPOSER
+rem ============================================================
 echo [DEBUG] Configurando PATH...
 set "PHP_PATH=C:\xampp\php"
 set "COMPOSER_PATH=C:\ProgramData\ComposerSetup\bin"
 set "PATH=%PHP_PATH%;%COMPOSER_PATH%;%PATH%"
 echo [DEBUG] PATH configurado.
 
-:: ============================================================
-:: DETECCION DE RUTAS
-:: ============================================================
+rem ============================================================
+rem DETECCION DE RUTAS
+rem ============================================================
 echo [DEBUG] Detectando rutas...
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
@@ -30,9 +30,9 @@ echo [DEBUG] Script esta en: %SCRIPT_DIR%
 set "BACKEND_PATH=%SCRIPT_DIR%"
 echo [DEBUG] Backend: %BACKEND_PATH%
 
-:: ============================================================
-:: FRONTEND - RUTA EXACTA DEL USUARIO
-:: ============================================================
+rem ============================================================
+rem FRONTEND - RUTA EXACTA DEL USUARIO
+rem ============================================================
 echo [DEBUG] Buscando frontend...
 set "RUTA_USUARIO=C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
 echo [DEBUG] Verificando ruta: %RUTA_USUARIO%
@@ -43,20 +43,20 @@ if exist "%RUTA_USUARIO%\index.html" (
     goto frontend_ok
 )
 
-:: Opcion 1: Dentro del backend
+rem Opcion 1: Dentro del backend
 if exist "%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades\index.html" (
     set "FRONTEND_PATH=%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades"
     goto frontend_ok
 )
 
-:: Opcion 2: Al lado del backend
+rem Opcion 2: Al lado del backend
 for %%D in ("%SCRIPT_DIR%\..") do set "PARENT_DIR=%%~fD"
 if exist "%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades\index.html" (
     set "FRONTEND_PATH=%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
     goto frontend_ok
 )
 
-:: Opcion 3: Buscar en perfil de usuario
+rem Opcion 3: Buscar en perfil de usuario
 set "USERPROFILE_PATH=%USERPROFILE%"
 for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend-incapacidades\index.html" 2^>nul') do (
     set "FRONTEND_PATH=%%~dpa"
@@ -64,14 +64,14 @@ for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend-incapacidades\i
     goto frontend_ok
 )
 
-:: Opcion 4: Buscar carpeta especifica
+rem Opcion 4: Buscar carpeta especifica
 for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend_incapacidades\frontend-incapacidades\index.html" 2^>nul') do (
     set "FRONTEND_PATH=%%~dpa"
     set "FRONTEND_PATH=!FRONTEND_PATH:~0,-1!"
     goto frontend_ok
 )
 
-:: Si no se encontro, pedir manual
+rem Si no se encontro, pedir manual
 echo.
 echo [ADVERTENCIA] No se encontro el frontend automaticamente.
 echo.
@@ -82,7 +82,7 @@ echo C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\front
 echo.
 set /p MANUAL_PATH="Ruta del frontend: "
 
-:: LIMPIAR COMILLAS
+rem LIMPIAR COMILLAS
 set "MANUAL_PATH=%MANUAL_PATH:"=%"
 echo [DEBUG] Ruta ingresada: %MANUAL_PATH%
 
@@ -115,9 +115,9 @@ echo [OK] Backend: %BACKEND_PATH%
 echo [OK] Frontend: %FRONTEND_PATH%
 echo.
 
-:: ============================================================
-:: VERIFICAR BACKEND
-:: ============================================================
+rem ============================================================
+rem VERIFICAR BACKEND
+rem ============================================================
 echo [DEBUG] Verificando estructura backend...
 if not exist "%BACKEND_PATH%\Backend_ms-auth" (
     echo [ERROR] No se encontro Backend_ms-auth en: %BACKEND_PATH%
@@ -128,9 +128,9 @@ if not exist "%BACKEND_PATH%\Backend_ms-auth" (
 echo [OK] Estructura backend verificada.
 echo.
 
-:: ============================================================
-:: VERIFICAR PHP
-:: ============================================================
+rem ============================================================
+rem VERIFICAR PHP
+rem ============================================================
 echo [0/5] Verificando PHP...
 echo [DEBUG] Ejecutando: C:\xampp\php\php.exe -v
 "C:\xampp\php\php.exe" -v >nul 2>&1
@@ -143,9 +143,9 @@ if errorlevel 1 (
 echo [OK] PHP detectado.
 echo.
 
-:: ============================================================
-:: VERIFICAR COMPOSER
-:: ============================================================
+rem ============================================================
+rem VERIFICAR COMPOSER
+rem ============================================================
 echo [0/5] Verificando Composer...
 echo [DEBUG] Ejecutando: composer -V
 composer -V >nul 2>&1
@@ -173,9 +173,9 @@ if errorlevel 1 (
 echo [OK] Composer listo: %COMPOSER_CMD%
 echo.
 
-:: ============================================================
-:: 1. INSTALAR ms-auth
-:: ============================================================
+rem ============================================================
+rem 1. INSTALAR ms-auth
+rem ============================================================
 echo [1/5] Instalando ms-auth...
 if not exist "%BACKEND_PATH%\Backend_ms-auth\ms-auth" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-auth\ms-auth
@@ -208,9 +208,9 @@ echo DB_PASS=>> .env
 echo [OK] ms-auth listo.
 echo.
 
-:: ============================================================
-:: 2. INSTALAR ms-empleados
-:: ============================================================
+rem ============================================================
+rem 2. INSTALAR ms-empleados
+rem ============================================================
 echo [2/5] Instalando ms-empleados...
 if not exist "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-empleados\ms-empleados
@@ -242,9 +242,9 @@ echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
 echo [OK] ms-empleados listo.
 echo.
 
-:: ============================================================
-:: 3. INSTALAR ms-incapacidades
-:: ============================================================
+rem ============================================================
+rem 3. INSTALAR ms-incapacidades
+rem ============================================================
 echo [3/5] Instalando ms-incapacidades...
 if not exist "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades
@@ -277,9 +277,9 @@ echo MS_EMPLEADOS_URL=http://127.0.0.1:8002>> .env
 echo [OK] ms-incapacidades listo.
 echo.
 
-:: ============================================================
-:: 4. INSTALAR ms-seguimiento
-:: ============================================================
+rem ============================================================
+rem 4. INSTALAR ms-seguimiento
+rem ============================================================
 echo [4/5] Instalando ms-seguimiento...
 if not exist "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento
@@ -313,9 +313,9 @@ echo APP_PORT=8004>> .env
 echo [OK] ms-seguimiento listo.
 echo.
 
-:: ============================================================
-:: 5. CREAR BASE DE DATOS
-:: ============================================================
+rem ============================================================
+rem 5. CREAR BASE DE DATOS
+rem ============================================================
 echo [5/5] Creando bases de datos...
 cd /d "%BACKEND_PATH%"
 echo [DEBUG] Intentando conectar a MySQL...
@@ -337,17 +337,17 @@ if errorlevel 1 (
 )
 echo.
 
-:: ============================================================
-:: GUARDAR RUTAS
-:: ============================================================
+rem ============================================================
+rem GUARDAR RUTAS
+rem ============================================================
 echo [DEBUG] Guardando rutas en .paths.ini...
 echo BACKEND_PATH=%BACKEND_PATH%> "%BACKEND_PATH%\.paths.ini"
 echo FRONTEND_PATH=%FRONTEND_PATH%>> "%BACKEND_PATH%\.paths.ini"
 echo [OK] Rutas guardadas.
 
-:: ============================================================
-:: FIN
-:: ============================================================
+rem ============================================================
+rem FIN
+rem ============================================================
 echo ============================================
 echo  INSTALACION COMPLETA!
 echo ============================================
