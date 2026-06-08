@@ -138,25 +138,22 @@ echo [OK] Estructura backend verificada. >> "%LOGFILE%"
 echo.
 
 rem ============================================================
-rem PASO 3: VERIFICAR PHP (SIN REDIRECCIONAR A nul)
+rem PASO 3: VERIFICAR PHP
 rem ============================================================
 echo [3] Verificando PHP...
 echo [3] Verificando PHP... >> "%LOGFILE%"
-echo [DEBUG] Ejecutando: C:\xampp\php\php.exe -v >> "%LOGFILE%"
 
-rem PRUEBA 1: Ejecutar PHP y capturar salida en variable
+rem Ejecutar PHP y capturar salida en variable (no redirigir a nul)
 for /f "delims=" %%a in ('"C:\xampp\php\php.exe" -v 2^>^&1') do (
     echo [DEBUG] PHP salida: %%a >> "%LOGFILE%"
 )
 
-rem Verificar si el archivo php.exe existe
 if exist "C:\xampp\php\php.exe" (
     echo [DEBUG] php.exe SI existe en disco >> "%LOGFILE%"
 ) else (
     echo [DEBUG] php.exe NO existe en C:\xampp\php\ >> "%LOGFILE%"
 )
 
-rem Ejecutar PHP directamente SIN redirigir a nul (para no cerrar ventana)
 "C:\xampp\php\php.exe" -v
 set PHP_ERROR=%errorlevel%
 echo [DEBUG] PHP errorlevel: %PHP_ERROR% >> "%LOGFILE%"
@@ -179,49 +176,65 @@ echo [OK] PHP detectado. >> "%LOGFILE%"
 echo.
 
 rem ============================================================
-rem PASO 4: VERIFICAR COMPOSER (SIN REDIRECCIONAR A nul)
+rem PASO 4: VERIFICAR COMPOSER (METODO SEGURO)
 rem ============================================================
 echo [4] Verificando Composer...
 echo [4] Verificando Composer... >> "%LOGFILE%"
 
-composer -v
-set COMPOSER_ERROR=%errorlevel%
-echo [DEBUG] Composer errorlevel: %COMPOSER_ERROR% >> "%LOGFILE%"
+rem Metodo 1: Buscar con WHERE (no ejecuta, solo busca)
+where composer >nul 2>&1
+set WHERE_ERROR=%errorlevel%
+echo [DEBUG] WHERE composer errorlevel: %WHERE_ERROR% >> "%LOGFILE%"
 
-if %COMPOSER_ERROR% neq 0 (
-    echo [ADVERTENCIA] Composer no esta en PATH. Buscando alternativas...
-    echo [ADVERTENCIA] Composer no en PATH >> "%LOGFILE%"
-    
-    if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
-        set "COMPOSER_CMD=C:\ProgramData\ComposerSetup\bin\composer.bat"
-        echo [OK] Composer encontrado en ruta alternativa.
-        echo [OK] Composer alternativo >> "%LOGFILE%"
-        goto composer_ok
-    )
-    
-    if exist "C:\xampp\php\composer.phar" (
-        set "COMPOSER_CMD=C:\xampp\php\php.exe C:\xampp\php\composer.phar"
-        echo [OK] Composer encontrado como phar.
-        echo [OK] Composer phar >> "%LOGFILE%"
-        goto composer_ok
-    )
-    
-    echo [ERROR] Composer no encontrado en ninguna ruta.
-    echo [ERROR] Composer no encontrado >> "%LOGFILE%"
-    echo.
-    echo Descarga Composer desde: https://getcomposer.org/download/
-    echo.
-    pause
-    cmd /k
+if %WHERE_ERROR% equ 0 (
+    echo [OK] Composer encontrado en PATH.
+    echo [OK] Composer encontrado en PATH. >> "%LOGFILE%"
+    set "COMPOSER_CMD=composer"
+    goto composer_ok
 )
 
-set "COMPOSER_CMD=composer"
-echo [OK] Composer detectado.
-echo [OK] Composer detectado. >> "%LOGFILE%"
+rem Metodo 2: Buscar en ruta alternativa
+if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
+    echo [OK] Composer encontrado en ruta alternativa.
+    echo [OK] Composer alternativo >> "%LOGFILE%"
+    set "COMPOSER_CMD=C:\ProgramData\ComposerSetup\bin\composer.bat"
+    goto composer_ok
+)
+
+rem Metodo 3: Buscar como phar en XAMPP
+if exist "C:\xampp\php\composer.phar" (
+    echo [OK] Composer encontrado como phar.
+    echo [OK] Composer phar >> "%LOGFILE%"
+    set "COMPOSER_CMD=C:\xampp\php\php.exe C:\xampp\php\composer.phar"
+    goto composer_ok
+)
+
+rem Metodo 4: Buscar en otras ubicaciones comunes
+if exist "C:\xampp\composer\composer.bat" (
+    echo [OK] Composer encontrado en C:\xampp\composer\
+    echo [OK] Composer en xampp\composer >> "%LOGFILE%"
+    set "COMPOSER_CMD=C:\xampp\composer\composer.bat"
+    goto composer_ok
+)
+
+if exist "C:\Program Files\Composer\bin\composer.bat" (
+    echo [OK] Composer encontrado en Program Files.
+    echo [OK] Composer en Program Files >> "%LOGFILE%"
+    set "COMPOSER_CMD=C:\Program Files\Composer\bin\composer.bat"
+    goto composer_ok
+)
+
+echo [ERROR] Composer no encontrado en ninguna ruta.
+echo [ERROR] Composer no encontrado >> "%LOGFILE%"
 echo.
+echo Descarga Composer desde: https://getcomposer.org/download/
+echo.
+pause
+cmd /k
 
 :composer_ok
 echo [DEBUG] Usando Composer: %COMPOSER_CMD% >> "%LOGFILE%"
+echo.
 
 rem ============================================================
 rem PASO 5: INSTALAR MICROSERVICIOS
