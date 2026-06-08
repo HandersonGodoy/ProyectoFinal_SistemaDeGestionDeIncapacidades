@@ -6,6 +6,13 @@ echo ============================================
 echo.
 
 :: ============================================================
+:: FORZAR RUTAS DE PHP Y COMPOSER EN EL PATH
+:: ============================================================
+set "PHP_PATH=C:\xampp\php"
+set "COMPOSER_PATH=C:\ProgramData\ComposerSetup\bin"
+set "PATH=%PHP_PATH%;%COMPOSER_PATH%;%PATH%"
+
+:: ============================================================
 :: DETECCION AUTOMATICA DE RUTAS
 :: ============================================================
 
@@ -24,8 +31,21 @@ if exist "%BACKEND_PATH%\.paths.ini" (
     )
 )
 
-:: Si no hay .paths.ini, buscar el frontend
+:: Verificar que la ruta guardada sigue siendo valida
+if not "%FRONTEND_PATH%"=="" (
+    if not exist "%FRONTEND_PATH%\index.html" (
+        set "FRONTEND_PATH="
+    )
+)
+
+:: Si no hay .paths.ini o la ruta guardada es invalida, buscar el frontend
 if "%FRONTEND_PATH%"=="" (
+    :: OPCION 0: Ruta exacta del usuario (TU RUTA)
+    if exist "C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades\index.html" (
+        set "FRONTEND_PATH=C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
+        goto :frontend_found
+    )
+
     :: Opcion 1: Frontend en la misma carpeta
     if exist "%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades\index.html" (
         set "FRONTEND_PATH=%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades"
@@ -59,7 +79,17 @@ if "%FRONTEND_PATH%"=="" (
     echo.
     set /p MANUAL_PATH="Arrastra la carpeta frontend-incapacidades aqui y presiona Enter: "
     set "FRONTEND_PATH=%MANUAL_PATH%"
+
+    :: Si la carpeta arrastrada no tiene index.html, revisar si tiene subcarpeta frontend-incapacidades
     if not exist "%FRONTEND_PATH%\index.html" (
+        if exist "%FRONTEND_PATH%\frontend-incapacidades\index.html" (
+            set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades"
+            goto :frontend_found
+        )
+        if exist "%FRONTEND_PATH%\frontend-incapacidades\frontend-incapacidades\index.html" (
+            set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades\frontend-incapacidades"
+            goto :frontend_found
+        )
         echo [ERROR] Esa carpeta no contiene index.html
         pause
         exit /b 1
@@ -89,27 +119,27 @@ timeout /t 2 /nobreak >nul
 
 :: Terminal 1: ms-auth (puerto 8001)
 echo [1/5] Iniciando ms-auth en puerto 8001...
-start "MS-AUTH :8001" cmd /k "cd /d %BACKEND_PATH%\Backend_ms-auth\ms-auth && php -S 127.0.0.1:8001 -t public"
+start "MS-AUTH :8001" cmd /k "set PATH=C:\xampp\php;C:\ProgramData\ComposerSetup\bin;%PATH% && cd /d %BACKEND_PATH%\Backend_ms-auth\ms-auth && php -S 127.0.0.1:8001 -t public"
 timeout /t 3 /nobreak >nul
 
 :: Terminal 2: ms-empleados (puerto 8002)
 echo [2/5] Iniciando ms-empleados en puerto 8002...
-start "MS-EMPLEADOS :8002" cmd /k "cd /d %BACKEND_PATH%\Backend_ms-empleados\ms-empleados && php -S 127.0.0.1:8002 -t public"
+start "MS-EMPLEADOS :8002" cmd /k "set PATH=C:\xampp\php;C:\ProgramData\ComposerSetup\bin;%PATH% && cd /d %BACKEND_PATH%\Backend_ms-empleados\ms-empleados && php -S 127.0.0.1:8002 -t public"
 timeout /t 3 /nobreak >nul
 
 :: Terminal 3: ms-incapacidades (puerto 8003)
 echo [3/5] Iniciando ms-incapacidades en puerto 8003...
-start "MS-INCAPACIDADES :8003" cmd /k "cd /d %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades && php -S 127.0.0.1:8003 -t public"
+start "MS-INCAPACIDADES :8003" cmd /k "set PATH=C:\xampp\php;C:\ProgramData\ComposerSetup\bin;%PATH% && cd /d %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades && php -S 127.0.0.1:8003 -t public"
 timeout /t 3 /nobreak >nul
 
 :: Terminal 4: ms-seguimiento (puerto 8004)
 echo [4/5] Iniciando ms-seguimiento en puerto 8004...
-start "MS-SEGUIMIENTO :8004" cmd /k "cd /d %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento && php -S 127.0.0.1:8004 -t public"
+start "MS-SEGUIMIENTO :8004" cmd /k "set PATH=C:\xampp\php;C:\ProgramData\ComposerSetup\bin;%PATH% && cd /d %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento && php -S 127.0.0.1:8004 -t public"
 timeout /t 3 /nobreak >nul
 
 :: Terminal 5: frontend (puerto 8080)
 echo [5/5] Iniciando frontend en puerto 8080...
-start "FRONTEND :8080" cmd /k "cd /d %FRONTEND_PATH% && php -S 127.0.0.1:8080"
+start "FRONTEND :8080" cmd /k "set PATH=C:\xampp\php;C:\ProgramData\ComposerSetup\bin;%PATH% && cd /d %FRONTEND_PATH% && php -S 127.0.0.1:8080"
 
 timeout /t 2 /nobreak >nul
 echo.

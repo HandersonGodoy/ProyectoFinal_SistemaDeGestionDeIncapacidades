@@ -7,8 +7,14 @@ echo ============================================
 echo.
 
 :: ============================================================
+:: FORZAR RUTAS DE PHP Y COMPOSER EN EL PATH
+:: ============================================================
+set "PHP_PATH=C:\xampp\php"
+set "COMPOSER_PATH=C:\ProgramData\ComposerSetup\bin"
+set "PATH=%PHP_PATH%;%COMPOSER_PATH%;%PATH%"
+
+:: ============================================================
 :: DETECCION AUTOMATICA DE RUTAS
-:: Busca las carpetas en el disco sin importar el usuario
 :: ============================================================
 
 echo [INFO] Detectando rutas automaticamente...
@@ -26,6 +32,12 @@ set "BACKEND_PATH=%SCRIPT_DIR%"
 
 :: Buscar la carpeta del frontend (puede estar al lado o dentro)
 set "FRONTEND_PATH="
+
+:: OPCION 0: Ruta exacta del usuario (TU RUTA)
+if exist "C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades\index.html" (
+    set "FRONTEND_PATH=C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
+    goto :frontend_found
+)
 
 :: Opcion 1: Frontend esta en la misma carpeta que el backend (como subcarpeta)
 if exist "%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades\index.html" (
@@ -68,13 +80,24 @@ for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\ProyectoFinal_SistemaDeG
 echo [ADVERTENCIA] No se pudo encontrar el frontend automaticamente.
 echo.
 echo Rutas buscadas:
+echo   - C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades
 echo   - %SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades
 echo   - %PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend
 echo   - En todo %USERPROFILE_PATH%
 echo.
 set /p MANUAL_PATH="Arrastra la carpeta frontend-incapacidades aqui y presiona Enter: "
 set "FRONTEND_PATH=%MANUAL_PATH%"
+
+:: Si la carpeta arrastrada no tiene index.html, revisar si tiene subcarpeta frontend-incapacidades
 if not exist "%FRONTEND_PATH%\index.html" (
+    if exist "%FRONTEND_PATH%\frontend-incapacidades\index.html" (
+        set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades"
+        goto :frontend_found
+    )
+    if exist "%FRONTEND_PATH%\frontend-incapacidades\frontend-incapacidades\index.html" (
+        set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades\frontend-incapacidades"
+        goto :frontend_found
+    )
     echo [ERROR] Esa carpeta no contiene index.html
     pause
     exit /b 1
@@ -106,11 +129,11 @@ echo.
 :: VERIFICAR PHP Y COMPOSER
 :: ============================================================
 echo [0/5] Verificando PHP...
-php -v >nul 2>&1
+"C:\xampp\php\php.exe" -v >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERROR] PHP no encontrado en el PATH.
-    echo         Instala XAMPP desde: https://www.apachefriends.org/
-    echo         O agrega PHP al PATH de Windows.
+    echo [ERROR] PHP no encontrado en C:\xampp\php\php.exe
+    echo         Verifica que XAMPP este instalado en C:\xampp
+    echo         O edita este .bat y cambia la ruta de PHP.
     pause
     exit /b 1
 )
@@ -121,7 +144,7 @@ composer -V >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] Composer no encontrado en el PATH.
     echo         Descarga desde: https://getcomposer.org/download/
-    echo         O usa el instalador de XAMPP.
+    echo         O agrega Composer al PATH de Windows.
     pause
     exit /b 1
 )
@@ -224,9 +247,9 @@ echo.
 :: ============================================================
 echo [5/5] Creando bases de datos...
 cd /d "%BACKEND_PATH%"
-mysql -u root -e "source setup.sql" 2>nul
+"C:\xampp\php\php.exe" -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR: '.$e->getMessage(); }" >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ADVERTENCIA] No se pudo crear la base de datos automaticamente.
+    echo [ADVERTENCIA] No se pudo conectar a MySQL automaticamente.
     echo         Posibles causas:
     echo         - MySQL no esta corriendo (abre XAMPP Control Panel)
     echo         - El usuario root tiene contrasena
@@ -238,7 +261,12 @@ if %errorlevel% neq 0 (
     echo         3. Abre phpMyAdmin
     echo         4. Importa el archivo setup.sql
 ) else (
-    echo [OK] Bases de datos creadas exitosamente.
+    mysql -u root -e "source setup.sql" 2>nul
+    if %errorlevel% neq 0 (
+        echo [ADVERTENCIA] Fallo al ejecutar setup.sql. Intenta importarlo manualmente en phpMyAdmin.
+    ) else (
+        echo [OK] Bases de datos creadas exitosamente.
+    )
 )
 echo.
 
