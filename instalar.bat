@@ -76,26 +76,6 @@ exit
 echo.
 
 rem ============================================================
-rem DETECTAR MySQL (hermano de PHP en XAMPP)
-rem ============================================================
-echo Detectando MySQL...
-set MYSQL_BIN=%PHP_PATH%\..\mysql\bin
-if exist "%MYSQL_BIN%\mysql.exe" (
-    set PATH=%MYSQL_BIN%;%PATH%
-    echo OK MySQL encontrado en %MYSQL_BIN%
-) else (
-    for /f "delims=" %%a in ('where mysql 2^>nul') do (
-        set MYSQL_BIN=%%~dpa
-        set PATH=%MYSQL_BIN%;%PATH%
-        echo OK MySQL encontrado en PATH
-        goto mysql_ok
-    )
-    echo ADVERTENCIA: No se encontro mysql.exe. Buscando en ejecucion...
-)
-:mysql_ok
-echo.
-
-rem ============================================================
 rem DETECTAR COMPOSER AUTOMATICAMENTE
 rem ============================================================
 echo Detectando Composer...
@@ -336,7 +316,59 @@ echo OK ms-seguimiento listo.
 echo.
 
 rem ============================================================
-rem CREAR BASE DE DATOS  (CORREGIDO)
+rem DETECTAR MySQL (rutas hardcodeadas como PHP y Composer)
+rem ============================================================
+echo Detectando MySQL...
+
+set MYSQL_CMD=
+
+rem Opcion 1: XAMPP en C:
+if exist "C:\xampp\mysql\bin\mysql.exe" (
+    set MYSQL_CMD=C:\xampp\mysql\bin\mysql.exe
+    echo OK MySQL encontrado en C:\xampp\mysql\bin
+    goto mysql_ok
+)
+
+rem Opcion 2: XAMPP en D:
+if exist "D:\xampp\mysql\bin\mysql.exe" (
+    set MYSQL_CMD=D:\xampp\mysql\bin\mysql.exe
+    echo OK MySQL encontrado en D:\xampp\mysql\bin
+    goto mysql_ok
+)
+
+rem Opcion 3: XAMPP en E:
+if exist "E:\xampp\mysql\bin\mysql.exe" (
+    set MYSQL_CMD=E:\xampp\mysql\bin\mysql.exe
+    echo OK MySQL encontrado en E:\xampp\mysql\bin
+    goto mysql_ok
+)
+
+rem Opcion 4: WAMP (buscar cualquier version de MySQL)
+for /d %%D in ("C:\wamp64\bin\mysql\*") do (
+    if exist "%%D\bin\mysql.exe" (
+        set MYSQL_CMD=%%D\bin\mysql.exe
+        echo OK MySQL encontrado en WAMP
+        goto mysql_ok
+    )
+)
+
+rem Opcion 5: Buscar en PATH
+for /f "delims=" %%a in ('where mysql 2^>nul') do (
+    set MYSQL_CMD=%%a
+    echo OK MySQL encontrado en PATH: %%a
+    goto mysql_ok
+)
+
+echo ERROR: MySQL no encontrado.
+echo Asegurate de tener XAMPP/WAMP instalado y MySQL iniciado.
+pause
+exit
+
+:mysql_ok
+echo.
+
+rem ============================================================
+rem CREAR BASE DE DATOS
 rem ============================================================
 echo Creando bases de datos...
 cd /d %BACKEND_PATH%
@@ -357,8 +389,8 @@ if errorlevel 1 (
     exit
 )
 
-rem Ejecutar setup.sql (ahora mysql.exe SI esta en PATH)
-mysql -u root -e "source %BACKEND_PATH%\setup.sql"
+rem Ejecutar setup.sql usando la ruta detectada
+"%MYSQL_CMD%" -u root -e "source %BACKEND_PATH%\setup.sql"
 if errorlevel 1 (
     echo ADVERTENCIA: Fallo setup.sql. Importalo manualmente.
     pause
