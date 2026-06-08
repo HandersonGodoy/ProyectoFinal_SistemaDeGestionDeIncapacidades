@@ -1,0 +1,21 @@
+GUIA RAPIDA - Sistema de Gestion de Incapacidades
+================================================
+
+1. DESCARGAR
+   git clone https://github.com/tu-usuario/frontend-incapacidades.git
+   git clone https://github.com/tu-usuario/backend-incapacidades.git
+
+2. INSTALAR (doble clic)
+   Instalar.bat
+
+3. INICIAR (doble clic)
+   INICIAR_SERVIDORES.bat
+
+4. ABRIR NAVEGADOR
+   http://127.0.0.1:8080
+
+5. LOGIN
+   admin / admin123
+
+================================================
+Si algo falla, leer README.md completo
