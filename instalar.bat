@@ -123,7 +123,7 @@ if not exist "%BACKEND_PATH%\Backend_ms-auth" (
     echo [ERROR] No se encontro Backend_ms-auth en: %BACKEND_PATH%
     echo         Asegurate de que este .bat este en la carpeta raiz del proyecto.
     pause
-    exit /b 1
+    goto fin_error
 )
 echo [OK] Estructura backend verificada.
 echo.
@@ -138,7 +138,7 @@ if errorlevel 1 (
     echo [ERROR] PHP no encontrado en C:\xampp\php\php.exe
     echo         Verifica que XAMPP este instalado en C:\xampp
     pause
-    exit /b 1
+    goto fin_error
 )
 echo [OK] PHP detectado.
 echo.
@@ -164,7 +164,7 @@ if errorlevel 1 (
             echo [ERROR] Composer no encontrado en ninguna ruta.
             echo         Descarga desde: https://getcomposer.org/download/
             pause
-            exit /b 1
+            goto fin_error
         )
     )
 ) else (
@@ -180,14 +180,14 @@ echo [1/5] Instalando ms-auth...
 if not exist "%BACKEND_PATH%\Backend_ms-auth\ms-auth" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-auth\ms-auth
     pause
-    exit /b 1
+    goto fin_error
 )
 
 cd /d "%BACKEND_PATH%\Backend_ms-auth\ms-auth"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a la carpeta ms-auth
     pause
-    exit /b 1
+    goto fin_error
 )
 
 echo [DEBUG] Ejecutando composer install en ms-auth...
@@ -197,7 +197,7 @@ if errorlevel 1 (
     echo [ERROR] Fallo composer install en ms-auth
     echo         Verifica tu conexion a internet.
     pause
-    exit /b 1
+    goto fin_error
 )
 
 echo DB_HOST=localhost> .env
@@ -215,14 +215,14 @@ echo [2/5] Instalando ms-empleados...
 if not exist "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-empleados\ms-empleados
     pause
-    exit /b 1
+    goto fin_error
 )
 
 cd /d "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-empleados
     pause
-    exit /b 1
+    goto fin_error
 )
 
 if exist composer.lock del composer.lock >nul 2>&1
@@ -230,7 +230,7 @@ if exist composer.lock del composer.lock >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Fallo composer install en ms-empleados
     pause
-    exit /b 1
+    goto fin_error
 )
 
 echo DB_HOST=localhost> .env
@@ -249,14 +249,14 @@ echo [3/5] Instalando ms-incapacidades...
 if not exist "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades
     pause
-    exit /b 1
+    goto fin_error
 )
 
 cd /d "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-incapacidades
     pause
-    exit /b 1
+    goto fin_error
 )
 
 if exist composer.lock del composer.lock >nul 2>&1
@@ -264,7 +264,7 @@ if exist composer.lock del composer.lock >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Fallo composer install en ms-incapacidades
     pause
-    exit /b 1
+    goto fin_error
 )
 
 echo DB_HOST=localhost> .env
@@ -284,14 +284,14 @@ echo [4/5] Instalando ms-seguimiento...
 if not exist "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento
     pause
-    exit /b 1
+    goto fin_error
 )
 
 cd /d "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-seguimiento
     pause
-    exit /b 1
+    goto fin_error
 )
 
 if exist composer.lock del composer.lock >nul 2>&1
@@ -299,7 +299,7 @@ if exist composer.lock del composer.lock >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Fallo composer install en ms-seguimiento
     pause
-    exit /b 1
+    goto fin_error
 )
 
 echo DB_HOST=localhost> .env
@@ -346,7 +346,7 @@ echo FRONTEND_PATH=%FRONTEND_PATH%>> "%BACKEND_PATH%\.paths.ini"
 echo [OK] Rutas guardadas.
 
 rem ============================================================
-rem FIN
+rem FIN EXITOSO
 rem ============================================================
 echo ============================================
 echo  INSTALACION COMPLETA!
@@ -360,3 +360,16 @@ echo   admin / admin123
 echo   gestionhumana / gh123
 echo.
 pause
+goto fin
+
+:fin_error
+echo.
+echo ============================================
+echo  INSTALACION FALLIDA - Revisa los errores arriba
+echo ============================================
+echo.
+echo Presiona cualquier tecla para cerrar...
+pause >nul
+
+:fin
+cmd /k
