@@ -2,8 +2,7 @@
 setlocal EnableExtensions EnableDelayedExpansion
 
 rem ============================================================
-rem LOG DE ERRORES - Si se cierra la ventana, lee este archivo:
-rem    Instalar_LOG.txt
+rem LOG DE ERRORES - Si se cierra la ventana, lee: Instalar_LOG.txt
 rem ============================================================
 set "LOGFILE=%~dp0Instalar_LOG.txt"
 echo ============================================ > "%LOGFILE%"
@@ -18,12 +17,12 @@ echo  INSTALADOR - Sistema de Gestion de Incapacidades
 echo  Corporate Solutions
 echo ============================================
 echo.
-echo [INFO] Si esta ventana se cierra, revisa el archivo:
+echo [INFO] Si esta ventana se cierra, revisa:
 echo        Instalar_LOG.txt en esta misma carpeta
 echo.
 
 rem ============================================================
-rem PASO 0: FORZAR RUTAS DE PHP Y COMPOSER
+rem PASO 0: CONFIGURAR PATH
 rem ============================================================
 echo [0] Configurando PATH...
 echo [0] Configurando PATH... >> "%LOGFILE%"
@@ -40,19 +39,14 @@ echo [1] Detectando rutas... >> "%LOGFILE%"
 
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
-echo [DEBUG] Script en: %SCRIPT_DIR% >> "%LOGFILE%"
-
 set "BACKEND_PATH=%SCRIPT_DIR%"
+echo [DEBUG] Script en: %SCRIPT_DIR% >> "%LOGFILE%"
 echo [DEBUG] Backend: %BACKEND_PATH% >> "%LOGFILE%"
 
-rem FRONTEND - Intentar ruta exacta primero
+rem FRONTEND - Ruta exacta hardcodeada (adaptar si cambia usuario)
 set "FRONTEND_PATH=C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
 echo [DEBUG] Probando ruta exacta: %FRONTEND_PATH% >> "%LOGFILE%"
-
-if exist "%FRONTEND_PATH%\index.html" (
-    echo [OK] Frontend encontrado en ruta exacta >> "%LOGFILE%"
-    goto frontend_ok
-)
+if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
 
 rem Opcion 1: Dentro del backend
 set "FRONTEND_PATH=%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades"
@@ -85,7 +79,7 @@ for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend_incapacidades\f
 
 rem Si no se encontro, pedir manual
 echo [ADVERTENCIA] No se encontro el frontend automaticamente.
-echo [ADVERTENCIA] No se encontro el frontend automaticamente. >> "%LOGFILE%"
+echo [ADVERTENCIA] No se encontro frontend automaticamente. >> "%LOGFILE%"
 echo.
 echo Escribe o pega la ruta COMPLETA de la carpeta que contiene index.html
 echo Ejemplo: C:\Users\Nombre\...\frontend-incapacidades
@@ -144,39 +138,58 @@ echo [OK] Estructura backend verificada. >> "%LOGFILE%"
 echo.
 
 rem ============================================================
-rem PASO 3: VERIFICAR PHP
+rem PASO 3: VERIFICAR PHP (SIN REDIRECCIONAR A nul)
 rem ============================================================
 echo [3] Verificando PHP...
 echo [3] Verificando PHP... >> "%LOGFILE%"
+echo [DEBUG] Ejecutando: C:\xampp\php\php.exe -v >> "%LOGFILE%"
 
-"C:\xampp\php\php.exe" -v >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] PHP no encontrado en C:\xampp\php\php.exe
-    echo [ERROR] PHP no encontrado >> "%LOGFILE%"
+rem PRUEBA 1: Ejecutar PHP y capturar salida en variable
+for /f "delims=" %%a in ('"C:\xampp\php\php.exe" -v 2^>^&1') do (
+    echo [DEBUG] PHP salida: %%a >> "%LOGFILE%"
+)
+
+rem Verificar si el archivo php.exe existe
+if exist "C:\xampp\php\php.exe" (
+    echo [DEBUG] php.exe SI existe en disco >> "%LOGFILE%"
+) else (
+    echo [DEBUG] php.exe NO existe en C:\xampp\php\ >> "%LOGFILE%"
+)
+
+rem Ejecutar PHP directamente SIN redirigir a nul (para no cerrar ventana)
+"C:\xampp\php\php.exe" -v
+set PHP_ERROR=%errorlevel%
+echo [DEBUG] PHP errorlevel: %PHP_ERROR% >> "%LOGFILE%"
+
+if %PHP_ERROR% neq 0 (
+    echo [ERROR] PHP no ejecuta correctamente.
+    echo [ERROR] PHP errorlevel: %PHP_ERROR% >> "%LOGFILE%"
     echo.
     echo Posibles soluciones:
     echo 1. Instala XAMPP desde https://www.apachefriends.org/
-    echo 2. O si XAMPP esta en otra unidad (D:, E:, etc.),
-    echo    edita este archivo y cambia la linea:
-    echo    set "PHP_PATH=C:\xampp\php"
-    echo    por tu ruta real.
+    echo 2. Si XAMPP esta en otra unidad, edita este archivo:
+    echo    Cambia: set "PHP_PATH=C:\xampp\php"
+    echo    Por tu ruta real, ejemplo: D:\xampp\php
     echo.
     pause
     cmd /k
 )
-echo [OK] PHP detectado.
+echo [OK] PHP detectado y funcionando.
 echo [OK] PHP detectado. >> "%LOGFILE%"
 echo.
 
 rem ============================================================
-rem PASO 4: VERIFICAR COMPOSER
+rem PASO 4: VERIFICAR COMPOSER (SIN REDIRECCIONAR A nul)
 rem ============================================================
 echo [4] Verificando Composer...
 echo [4] Verificando Composer... >> "%LOGFILE%"
 
-composer -V >nul 2>&1
-if errorlevel 1 (
-    echo [ADVERTENCIA] Composer no esta en PATH. Buscando...
+composer -v
+set COMPOSER_ERROR=%errorlevel%
+echo [DEBUG] Composer errorlevel: %COMPOSER_ERROR% >> "%LOGFILE%"
+
+if %COMPOSER_ERROR% neq 0 (
+    echo [ADVERTENCIA] Composer no esta en PATH. Buscando alternativas...
     echo [ADVERTENCIA] Composer no en PATH >> "%LOGFILE%"
     
     if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
