@@ -1,21 +1,31 @@
 GUIA RAPIDA - Sistema de Gestion de Incapacidades
 ================================================
 
-1. DESCARGAR
-   git clone https://github.com/tu-usuario/frontend-incapacidades.git
-   git clone https://github.com/tu-usuario/backend-incapacidades.git
+FUNCIONA EN CUALQUIER PC - DETECCION AUTOMATICA
 
-2. INSTALAR (doble clic)
+1. DESCARGAR DE GITHUB
+   git clone [repo-backend]
+   git clone [repo-frontend]
+
+2. COPIAR ARCHIVOS .bat
+   Copia Instalar.bat e INICIAR_SERVIDORES.bat
+   a la carpeta raiz del backend
+
+3. INSTALAR (doble clic)
    Instalar.bat
+   -> Detecta rutas automaticamente
+   -> Si no encuentra el frontend, arrastra la carpeta
 
-3. INICIAR (doble clic)
+4. INICIAR (doble clic)
    INICIAR_SERVIDORES.bat
+   -> Abre 5 ventanas automaticamente
 
-4. ABRIR NAVEGADOR
+5. ABRIR NAVEGADOR
    http://127.0.0.1:8080
 
-5. LOGIN
+6. LOGIN
    admin / admin123
 
 ================================================
-Si algo falla, leer README.md completo
+NO NECESITAS EDITAR NINGUNA RUTA
+================================================
