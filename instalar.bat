@@ -233,18 +233,31 @@ echo [DEBUG] Usando Composer: %COMPOSER_CMD% >> "%LOGFILE%"
 echo.
 
 rem ============================================================
+rem FUNCION PARA INSTALAR UN MICROSERVICIO
+rem ============================================================
+rem Parametros: %1 = nombre, %2 = carpeta, %3 = variables .env adicionales
+
+rem ============================================================
 rem PASO 5: INSTALAR MICROSERVICIOS
 rem ============================================================
 
 rem 5.1 ms-auth
-echo [5/9] Instalando ms-auth... (puede tardar varios minutos)
+echo ============================================
+echo [5/9] INSTALANDO ms-auth...
+echo ============================================
 echo [5/9] Instalando ms-auth... >> "%LOGFILE%"
+echo [INFO] Esto puede tardar 2-5 minutos. Espera...
+echo [INFO] No cierres esta ventana.
+echo.
+
 if not exist "%BACKEND_PATH%\Backend_ms-auth\ms-auth" (
-    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-auth\ms-auth
+    echo [ERROR] No existe la carpeta: %BACKEND_PATH%\Backend_ms-auth\ms-auth
     echo [ERROR] Falta Backend_ms-auth\ms-auth >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Entrando a carpeta ms-auth... >> "%LOGFILE%"
 cd /d "%BACKEND_PATH%\Backend_ms-auth\ms-auth"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-auth
@@ -252,36 +265,62 @@ if errorlevel 1 (
     pause
     cmd /k
 )
-if exist composer.lock del composer.lock >nul 2>&1
-echo [INFO] Ejecutando composer install para ms-auth...
-echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
-echo [INFO] Ejecutando composer install ms-auth >> "%LOGFILE%"
-%COMPOSER_CMD% install --no-interaction 2>&1
+echo [DEBUG] Carpeta ms-auth OK >> "%LOGFILE%"
+
+if exist composer.lock (
+    echo [DEBUG] Eliminando composer.lock viejo...
+    del composer.lock >nul 2>&1
+)
+
+echo [INFO] Ejecutando: composer install --no-interaction --verbose
+echo [INFO] Si no ves nada en 30 segundos, algo esta mal.
+echo [DEBUG] Ejecutando composer install ms-auth >> "%LOGFILE%"
+echo.
+
+rem EJECUTAR COMPOSER CON VERBOSE PARA VER PROGRESO
+%COMPOSER_CMD% install --no-interaction --verbose
+
 set COMPOSER_RESULT=%errorlevel%
 echo [DEBUG] Composer ms-auth result: %COMPOSER_RESULT% >> "%LOGFILE%"
+
 if %COMPOSER_RESULT% neq 0 (
-    echo [ERROR] Fallo composer install en ms-auth. Revisa tu internet.
+    echo.
+    echo [ERROR] Fallo composer install en ms-auth.
+    echo [ERROR] Codigo de error: %COMPOSER_RESULT%
+    echo [ERROR] Revisa tu conexion a internet.
     echo [ERROR] Fallo composer ms-auth, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Creando .env para ms-auth >> "%LOGFILE%"
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_auth>> .env
 echo DB_USER=root>> .env
 echo DB_PASS=>> .env
-echo [OK] ms-auth listo.
+
+echo [OK] ms-auth instalado correctamente.
 echo [OK] ms-auth listo. >> "%LOGFILE%"
+echo.
 echo.
 
 rem 5.2 ms-empleados
-echo [6/9] Instalando ms-empleados... (puede tardar varios minutos)
+echo ============================================
+echo [6/9] INSTALANDO ms-empleados...
+echo ============================================
 echo [6/9] Instalando ms-empleados... >> "%LOGFILE%"
+echo [INFO] Esto puede tardar 2-5 minutos. Espera...
+echo [INFO] No cierres esta ventana.
+echo.
+
 if not exist "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados" (
-    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-empleados\ms-empleados
+    echo [ERROR] No existe la carpeta: %BACKEND_PATH%\Backend_ms-empleados\ms-empleados
     echo [ERROR] Falta Backend_ms-empleados >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Entrando a carpeta ms-empleados... >> "%LOGFILE%"
 cd /d "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-empleados
@@ -289,37 +328,63 @@ if errorlevel 1 (
     pause
     cmd /k
 )
-if exist composer.lock del composer.lock >nul 2>&1
-echo [INFO] Ejecutando composer install para ms-empleados...
-echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
-echo [INFO] Ejecutando composer install ms-empleados >> "%LOGFILE%"
-%COMPOSER_CMD% install --no-interaction 2>&1
+echo [DEBUG] Carpeta ms-empleados OK >> "%LOGFILE%"
+
+if exist composer.lock (
+    echo [DEBUG] Eliminando composer.lock viejo...
+    del composer.lock >nul 2>&1
+)
+
+echo [INFO] Ejecutando: composer install --no-interaction --verbose
+echo [INFO] Si no ves nada en 30 segundos, algo esta mal.
+echo [DEBUG] Ejecutando composer install ms-empleados >> "%LOGFILE%"
+echo.
+
+rem EJECUTAR COMPOSER CON VERBOSE
+%COMPOSER_CMD% install --no-interaction --verbose
+
 set COMPOSER_RESULT=%errorlevel%
 echo [DEBUG] Composer ms-empleados result: %COMPOSER_RESULT% >> "%LOGFILE%"
+
 if %COMPOSER_RESULT% neq 0 (
+    echo.
     echo [ERROR] Fallo composer install en ms-empleados.
+    echo [ERROR] Codigo de error: %COMPOSER_RESULT%
+    echo [ERROR] Revisa tu conexion a internet.
     echo [ERROR] Fallo composer ms-empleados, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Creando .env para ms-empleados >> "%LOGFILE%"
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_empleados>> .env
 echo DB_USER=root>> .env
 echo DB_PASS=>> .env
 echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
-echo [OK] ms-empleados listo.
+
+echo [OK] ms-empleados instalado correctamente.
 echo [OK] ms-empleados listo. >> "%LOGFILE%"
+echo.
 echo.
 
 rem 5.3 ms-incapacidades
-echo [7/9] Instalando ms-incapacidades... (puede tardar varios minutos)
+echo ============================================
+echo [7/9] INSTALANDO ms-incapacidades...
+echo ============================================
 echo [7/9] Instalando ms-incapacidades... >> "%LOGFILE%"
+echo [INFO] Esto puede tardar 2-5 minutos. Espera...
+echo [INFO] No cierres esta ventana.
+echo.
+
 if not exist "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades" (
-    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades
+    echo [ERROR] No existe la carpeta: %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades
     echo [ERROR] Falta Backend_ms-incapacidades >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Entrando a carpeta ms-incapacidades... >> "%LOGFILE%"
 cd /d "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-incapacidades
@@ -327,38 +392,64 @@ if errorlevel 1 (
     pause
     cmd /k
 )
-if exist composer.lock del composer.lock >nul 2>&1
-echo [INFO] Ejecutando composer install para ms-incapacidades...
-echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
-echo [INFO] Ejecutando composer install ms-incapacidades >> "%LOGFILE%"
-%COMPOSER_CMD% install --no-interaction 2>&1
+echo [DEBUG] Carpeta ms-incapacidades OK >> "%LOGFILE%"
+
+if exist composer.lock (
+    echo [DEBUG] Eliminando composer.lock viejo...
+    del composer.lock >nul 2>&1
+)
+
+echo [INFO] Ejecutando: composer install --no-interaction --verbose
+echo [INFO] Si no ves nada en 30 segundos, algo esta mal.
+echo [DEBUG] Ejecutando composer install ms-incapacidades >> "%LOGFILE%"
+echo.
+
+rem EJECUTAR COMPOSER CON VERBOSE
+%COMPOSER_CMD% install --no-interaction --verbose
+
 set COMPOSER_RESULT=%errorlevel%
 echo [DEBUG] Composer ms-incapacidades result: %COMPOSER_RESULT% >> "%LOGFILE%"
+
 if %COMPOSER_RESULT% neq 0 (
+    echo.
     echo [ERROR] Fallo composer install en ms-incapacidades.
+    echo [ERROR] Codigo de error: %COMPOSER_RESULT%
+    echo [ERROR] Revisa tu conexion a internet.
     echo [ERROR] Fallo composer ms-incapacidades, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Creando .env para ms-incapacidades >> "%LOGFILE%"
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_incapacidades>> .env
 echo DB_USER=root>> .env
 echo DB_PASS=>> .env
 echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
 echo MS_EMPLEADOS_URL=http://127.0.0.1:8002>> .env
-echo [OK] ms-incapacidades listo.
+
+echo [OK] ms-incapacidades instalado correctamente.
 echo [OK] ms-incapacidades listo. >> "%LOGFILE%"
+echo.
 echo.
 
 rem 5.4 ms-seguimiento
-echo [8/9] Instalando ms-seguimiento... (puede tardar varios minutos)
+echo ============================================
+echo [8/9] INSTALANDO ms-seguimiento...
+echo ============================================
 echo [8/9] Instalando ms-seguimiento... >> "%LOGFILE%"
+echo [INFO] Esto puede tardar 2-5 minutos. Espera...
+echo [INFO] No cierres esta ventana.
+echo.
+
 if not exist "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento" (
-    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento
+    echo [ERROR] No existe la carpeta: %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento
     echo [ERROR] Falta Backend_ms-seguimiento >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Entrando a carpeta ms-seguimiento... >> "%LOGFILE%"
 cd /d "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a ms-seguimiento
@@ -366,19 +457,35 @@ if errorlevel 1 (
     pause
     cmd /k
 )
-if exist composer.lock del composer.lock >nul 2>&1
-echo [INFO] Ejecutando composer install para ms-seguimiento...
-echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
-echo [INFO] Ejecutando composer install ms-seguimiento >> "%LOGFILE%"
-%COMPOSER_CMD% install --no-interaction 2>&1
+echo [DEBUG] Carpeta ms-seguimiento OK >> "%LOGFILE%"
+
+if exist composer.lock (
+    echo [DEBUG] Eliminando composer.lock viejo...
+    del composer.lock >nul 2>&1
+)
+
+echo [INFO] Ejecutando: composer install --no-interaction --verbose
+echo [INFO] Si no ves nada en 30 segundos, algo esta mal.
+echo [DEBUG] Ejecutando composer install ms-seguimiento >> "%LOGFILE%"
+echo.
+
+rem EJECUTAR COMPOSER CON VERBOSE
+%COMPOSER_CMD% install --no-interaction --verbose
+
 set COMPOSER_RESULT=%errorlevel%
 echo [DEBUG] Composer ms-seguimiento result: %COMPOSER_RESULT% >> "%LOGFILE%"
+
 if %COMPOSER_RESULT% neq 0 (
+    echo.
     echo [ERROR] Fallo composer install en ms-seguimiento.
+    echo [ERROR] Codigo de error: %COMPOSER_RESULT%
+    echo [ERROR] Revisa tu conexion a internet.
     echo [ERROR] Fallo composer ms-seguimiento, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
+
+echo [DEBUG] Creando .env para ms-seguimiento >> "%LOGFILE%"
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_seguimiento>> .env
 echo DB_USER=root>> .env
@@ -386,31 +493,43 @@ echo DB_PASS=>> .env
 echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
 echo MS_INCAPACIDADES_URL=http://127.0.0.1:8003>> .env
 echo APP_PORT=8004>> .env
-echo [OK] ms-seguimiento listo.
+
+echo [OK] ms-seguimiento instalado correctamente.
 echo [OK] ms-seguimiento listo. >> "%LOGFILE%"
+echo.
 echo.
 
 rem ============================================================
 rem PASO 6: CREAR BASE DE DATOS
 rem ============================================================
-echo [9/9] Creando bases de datos...
+echo ============================================
+echo [9/9] CREANDO BASES DE DATOS...
+echo ============================================
 echo [9/9] Creando bases de datos... >> "%LOGFILE%"
 cd /d "%BACKEND_PATH%"
+echo [DEBUG] Intentando conectar a MySQL... >> "%LOGFILE%"
+
 "C:\xampp\php\php.exe" -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR'; }" >nul 2>&1
 if errorlevel 1 (
-    echo [ADVERTENCIA] No se pudo conectar a MySQL.
+    echo.
+    echo [ADVERTENCIA] No se pudo conectar a MySQL automaticamente.
     echo [ADVERTENCIA] MySQL no conecta >> "%LOGFILE%"
-    echo         Solucion manual:
-    echo         1. Abre XAMPP Control Panel
-    echo         2. Dale Start a MySQL
-    echo         3. Importa setup.sql en phpMyAdmin
+    echo.
+    echo Solucion manual:
+    echo 1. Abre XAMPP Control Panel
+    echo 2. Dale Start a MySQL
+    echo 3. Abre phpMyAdmin
+    echo 4. Importa el archivo setup.sql
+    echo.
 ) else (
+    echo [DEBUG] MySQL conectado. Ejecutando setup.sql... >> "%LOGFILE%"
     mysql -u root -e "source setup.sql" 2>nul
     if errorlevel 1 (
-        echo [ADVERTENCIA] Fallo setup.sql. Importalo manualmente.
+        echo [ADVERTENCIA] Fallo al ejecutar setup.sql automaticamente.
         echo [ADVERTENCIA] Fallo setup.sql >> "%LOGFILE%"
+        echo         Importa setup.sql manualmente en phpMyAdmin.
     ) else (
-        echo [OK] Bases de datos creadas.
+        echo [OK] Bases de datos creadas exitosamente.
         echo [OK] Bases de datos creadas. >> "%LOGFILE%"
     )
 )
@@ -419,8 +538,8 @@ echo.
 rem ============================================================
 rem PASO 7: GUARDAR RUTAS
 rem ============================================================
-echo Guardando rutas para INICIAR_SERVIDORES.bat...
-echo Guardando rutas... >> "%LOGFILE%"
+echo [INFO] Guardando rutas para INICIAR_SERVIDORES.bat...
+echo [INFO] Guardando rutas... >> "%LOGFILE%"
 echo BACKEND_PATH=%BACKEND_PATH%> "%BACKEND_PATH%\.paths.ini"
 echo FRONTEND_PATH=%FRONTEND_PATH%>> "%BACKEND_PATH%\.paths.ini"
 echo [OK] Rutas guardadas.
@@ -434,12 +553,15 @@ echo ============================================
 echo  INSTALACION COMPLETA!
 echo ============================================
 echo.
-echo Para iniciar: Doble clic en INICIAR_SERVIDORES.bat
-echo Accede: http://127.0.0.1:8080
+echo Para iniciar los servidores:
+echo   Doble clic en INICIAR_SERVIDORES.bat
 echo.
-echo Credenciales:
-echo   admin / admin123
-echo   gestionhumana / gh123
+echo Accede al sistema en:
+echo   http://127.0.0.1:8080
+echo.
+echo Credenciales de prueba:
+echo   Admin:          admin / admin123
+echo   Gestion Humana: gestionhumana / gh123
 echo.
 echo [FINALIZADO] %date% %time% >> "%LOGFILE%"
 pause
