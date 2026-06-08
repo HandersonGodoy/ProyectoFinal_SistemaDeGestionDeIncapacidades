@@ -1,13 +1,13 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-chcp 65001 >nul
 
 echo ============================================
 echo  INSTALADOR - Sistema de Gestion de Incapacidades
 echo  Corporate Solutions
 echo ============================================
 echo.
-echo [DEBUG] Iniciando script...
+echo [DEBUG] Script iniciado correctamente.
+echo [DEBUG] Si ves esto, el batch esta funcionando.
 echo.
 
 :: ============================================================
@@ -31,11 +31,11 @@ set "BACKEND_PATH=%SCRIPT_DIR%"
 echo [DEBUG] Backend: %BACKEND_PATH%
 
 :: ============================================================
-:: FRONTEND - RUTA EXACTA DEL USUARIO (PRIMERA OPCION)
+:: FRONTEND - RUTA EXACTA DEL USUARIO
 :: ============================================================
-echo [DEBUG] Buscando frontend en ruta exacta...
+echo [DEBUG] Buscando frontend...
 set "RUTA_USUARIO=C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
-echo [DEBUG] Verificando: %RUTA_USUARIO%
+echo [DEBUG] Verificando ruta: %RUTA_USUARIO%
 
 if exist "%RUTA_USUARIO%\index.html" (
     echo [DEBUG] ENCONTRADO en ruta exacta!
@@ -44,14 +44,12 @@ if exist "%RUTA_USUARIO%\index.html" (
 )
 
 :: Opcion 1: Dentro del backend
-echo [DEBUG] Buscando opcion 1...
 if exist "%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades\index.html" (
     set "FRONTEND_PATH=%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades"
     goto frontend_ok
 )
 
 :: Opcion 2: Al lado del backend
-echo [DEBUG] Buscando opcion 2...
 for %%D in ("%SCRIPT_DIR%\..") do set "PARENT_DIR=%%~fD"
 if exist "%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades\index.html" (
     set "FRONTEND_PATH=%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
@@ -59,7 +57,6 @@ if exist "%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\fr
 )
 
 :: Opcion 3: Buscar en perfil de usuario
-echo [DEBUG] Buscando opcion 3...
 set "USERPROFILE_PATH=%USERPROFILE%"
 for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend-incapacidades\index.html" 2^>nul') do (
     set "FRONTEND_PATH=%%~dpa"
@@ -68,7 +65,6 @@ for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend-incapacidades\i
 )
 
 :: Opcion 4: Buscar carpeta especifica
-echo [DEBUG] Buscando opcion 4...
 for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend_incapacidades\frontend-incapacidades\index.html" 2^>nul') do (
     set "FRONTEND_PATH=%%~dpa"
     set "FRONTEND_PATH=!FRONTEND_PATH:~0,-1!"
@@ -80,7 +76,9 @@ echo.
 echo [ADVERTENCIA] No se encontro el frontend automaticamente.
 echo.
 echo Escribe o pega la ruta COMPLETA donde esta el archivo index.html
-echo Ejemplo: C:\Users\blanc\ProyectoFinal...\frontend-incapacidades
+echo.
+echo Ejemplo correcto:
+echo C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades
 echo.
 set /p MANUAL_PATH="Ruta del frontend: "
 
@@ -90,16 +88,14 @@ echo [DEBUG] Ruta ingresada: %MANUAL_PATH%
 
 set "FRONTEND_PATH=%MANUAL_PATH%"
 
-:: Verificar si la ruta ingresada directamente tiene index.html
 if exist "%FRONTEND_PATH%\index.html" (
     echo [DEBUG] index.html encontrado directamente.
     goto frontend_ok
 )
 
-:: Si no, verificar si es la carpeta padre
 if exist "%FRONTEND_PATH%\frontend-incapacidades\index.html" (
     set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades"
-    echo [DEBUG] Corregido a subcarpeta frontend-incapacidades.
+    echo [DEBUG] Corregido a subcarpeta.
     goto frontend_ok
 )
 
@@ -109,9 +105,8 @@ if exist "%FRONTEND_PATH%\frontend_incapacidades\frontend-incapacidades\index.ht
     goto frontend_ok
 )
 
-echo [ERROR] No se encontro index.html en ninguna ubicacion.
-echo         Ruta final verificada: %FRONTEND_PATH%
-echo         Asegurate de que la ruta termine en la carpeta que tiene index.html
+echo [ERROR] No se encontro index.html.
+echo         Ruta verificada: %FRONTEND_PATH%
 pause
 exit /b 1
 
@@ -126,6 +121,7 @@ echo.
 echo [DEBUG] Verificando estructura backend...
 if not exist "%BACKEND_PATH%\Backend_ms-auth" (
     echo [ERROR] No se encontro Backend_ms-auth en: %BACKEND_PATH%
+    echo         Asegurate de que este .bat este en la carpeta raiz del proyecto.
     pause
     exit /b 1
 )
@@ -140,7 +136,7 @@ echo [DEBUG] Ejecutando: C:\xampp\php\php.exe -v
 "C:\xampp\php\php.exe" -v >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] PHP no encontrado en C:\xampp\php\php.exe
-    echo         Verifica que XAMPP este instalado ahi.
+    echo         Verifica que XAMPP este instalado en C:\xampp
     pause
     exit /b 1
 )
@@ -154,7 +150,7 @@ echo [0/5] Verificando Composer...
 echo [DEBUG] Ejecutando: composer -V
 composer -V >nul 2>&1
 if errorlevel 1 (
-    echo [ERROR] Composer no encontrado.
+    echo [ERROR] Composer no encontrado en PATH.
     echo         Buscando en rutas alternativas...
     
     if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
@@ -181,14 +177,12 @@ echo.
 :: 1. INSTALAR ms-auth
 :: ============================================================
 echo [1/5] Instalando ms-auth...
-echo [DEBUG] Verificando carpeta...
 if not exist "%BACKEND_PATH%\Backend_ms-auth\ms-auth" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-auth\ms-auth
     pause
     exit /b 1
 )
 
-echo [DEBUG] Entrando a carpeta ms-auth...
 cd /d "%BACKEND_PATH%\Backend_ms-auth\ms-auth"
 if errorlevel 1 (
     echo [ERROR] No se pudo entrar a la carpeta ms-auth
@@ -196,11 +190,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [DEBUG] Ejecutando composer install...
+echo [DEBUG] Ejecutando composer install en ms-auth...
 if exist composer.lock del composer.lock >nul 2>&1
 %COMPOSER_CMD% install --no-interaction
 if errorlevel 1 (
     echo [ERROR] Fallo composer install en ms-auth
+    echo         Verifica tu conexion a internet.
     pause
     exit /b 1
 )
