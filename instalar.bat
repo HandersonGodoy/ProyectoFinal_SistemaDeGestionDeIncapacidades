@@ -1,211 +1,240 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-chcp 65001 >nul
+
+rem ============================================================
+rem LOG DE ERRORES - Si se cierra la ventana, lee este archivo:
+rem    Instalar_LOG.txt
+rem ============================================================
+set "LOGFILE=%~dp0Instalar_LOG.txt"
+echo ============================================ > "%LOGFILE%"
+echo  LOG DE INSTALACION >> "%LOGFILE%"
+echo ============================================ >> "%LOGFILE%"
+echo. >> "%LOGFILE%"
+echo [INICIO] %date% %time% >> "%LOGFILE%"
+echo. >> "%LOGFILE%"
 
 echo ============================================
 echo  INSTALADOR - Sistema de Gestion de Incapacidades
 echo  Corporate Solutions
 echo ============================================
 echo.
-
-:: ============================================================
-:: BUSCAR PHP EN TODAS LAS RUTAS COMUNES
-:: ============================================================
-echo [DEBUG] Buscando PHP en tu sistema...
+echo [INFO] Si esta ventana se cierra, revisa el archivo:
+echo        Instalar_LOG.txt en esta misma carpeta
 echo.
 
-set "PHP_EXE="
+rem ============================================================
+rem PASO 0: FORZAR RUTAS DE PHP Y COMPOSER
+rem ============================================================
+echo [0] Configurando PATH...
+echo [0] Configurando PATH... >> "%LOGFILE%"
+set "PHP_PATH=C:\xampp\php"
+set "COMPOSER_PATH=C:\ProgramData\ComposerSetup\bin"
+set "PATH=%PHP_PATH%;%COMPOSER_PATH%;%PATH%"
+echo [OK] PATH configurado >> "%LOGFILE%"
 
-:: Ruta 1: XAMPP estandar
-if exist "C:\xampp\php\php.exe" (
-    set "PHP_EXE=C:\xampp\php\php.exe"
-    echo [OK] PHP encontrado en: C:\xampp\php\php.exe
-    goto php_found
-)
+rem ============================================================
+rem PASO 1: DETECTAR RUTAS
+rem ============================================================
+echo [1] Detectando rutas...
+echo [1] Detectando rutas... >> "%LOGFILE%"
 
-:: Ruta 2: XAMPP en otra unidad
-for %%D in (D E F G H) do (
-    if exist "%%D:\xampp\php\php.exe" (
-        set "PHP_EXE=%%D:\xampp\php\php.exe"
-        echo [OK] PHP encontrado en: %%D:\xampp\php\php.exe
-        goto php_found
-    )
-)
-
-:: Ruta 3: WAMP
-if exist "C:\wamp64\bin\php\php.exe" (
-    set "PHP_EXE=C:\wamp64\bin\php\php.exe"
-    echo [OK] PHP encontrado en: C:\wamp64\bin\php\php.exe
-    goto php_found
-)
-
-:: Ruta 4: Buscar en PATH
-where php >nul 2>&1
-if %errorlevel%==0 (
-    for /f "delims=" %%a in ('where php') do (
-        set "PHP_EXE=%%a"
-        echo [OK] PHP encontrado en PATH: %%a
-        goto php_found
-    )
-)
-
-:: Ruta 5: Buscar en disco C
-echo [DEBUG] Buscando php.exe en todo C:\ (puede tardar unos segundos)...
-for /f "delims=" %%a in ('dir /s /b "C:\php.exe" 2^>nul') do (
-    set "PHP_EXE=%%a"
-    echo [OK] PHP encontrado en: %%a
-    goto php_found
-)
-
-:: No se encontro
-echo [ERROR] PHP NO ENCONTRADO en ninguna ubicacion comun.
-echo.
-echo PHP debe estar instalado para continuar.
-echo.
-echo Rutas buscadas:
-echo   - C:\xampp\php\php.exe
-echo   - D:\xampp\php\php.exe (y otras unidades)
-echo   - C:\wamp64\bin\php\php.exe
-echo   - En el PATH de Windows
-echo   - C:\php.exe
-echo.
-echo SOLUCION:
-echo 1. Instala XAMPP desde: https://www.apachefriends.org/
-echo 2. O si ya lo tienes instalado, dime la ruta exacta donde esta php.exe
-echo    (ejemplo: D:\xampp\php\php.exe)
-echo.
-set /p PHP_MANUAL="Escribe la ruta completa de php.exe: "
-set "PHP_MANUAL=%PHP_MANUAL:"=%"
-if exist "%PHP_MANUAL%" (
-    set "PHP_EXE=%PHP_MANUAL%"
-    echo [OK] PHP confirmado en: %PHP_EXE%
-    goto php_found
-) else (
-    echo [ERROR] Esa ruta no existe: %PHP_MANUAL%
-    pause
-    cmd /k
-)
-
-:php_found
-echo [OK] Usando PHP: %PHP_EXE%
-echo.
-
-:: ============================================================
-:: VERIFICAR QUE PHP FUNCIONA
-:: ============================================================
-echo [DEBUG] Verificando que PHP ejecuta correctamente...
-"%PHP_EXE%" -v
-if %errorlevel% neq 0 (
-    echo [ERROR] PHP existe pero no ejecuta correctamente.
-    echo         Puede estar corrupto o bloqueado por antivirus.
-    pause
-    cmd /k
-)
-echo [OK] PHP funciona correctamente.
-echo.
-
-:: ============================================================
-:: BUSCAR COMPOSER
-:: ============================================================
-echo [DEBUG] Buscando Composer...
-set "COMPOSER_CMD="
-
-composer -V >nul 2>&1
-if %errorlevel%==0 (
-    set "COMPOSER_CMD=composer"
-    echo [OK] Composer encontrado en PATH.
-    goto composer_found
-)
-
-if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
-    set "COMPOSER_CMD=C:\ProgramData\ComposerSetup\bin\composer.bat"
-    echo [OK] Composer encontrado en: C:\ProgramData\ComposerSetup\bin\composer.bat
-    goto composer_found
-)
-
-if exist "C:\xampp\php\composer.phar" (
-    set "COMPOSER_CMD=%PHP_EXE% C:\xampp\php\composer.phar"
-    echo [OK] Composer encontrado como phar en XAMPP.
-    goto composer_found
-)
-
-echo [ERROR] Composer NO ENCONTRADO.
-echo         Descarga desde: https://getcomposer.org/download/
-pause
-cmd /k
-
-:composer_found
-echo [OK] Usando Composer: %COMPOSER_CMD%
-echo.
-
-:: ============================================================
-:: DETECCION DE RUTAS
-:: ============================================================
-echo [INFO] Detectando rutas automaticamente...
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+echo [DEBUG] Script en: %SCRIPT_DIR% >> "%LOGFILE%"
+
 set "BACKEND_PATH=%SCRIPT_DIR%"
+echo [DEBUG] Backend: %BACKEND_PATH% >> "%LOGFILE%"
 
-:: FRONTEND - Ruta exacta del usuario
+rem FRONTEND - Intentar ruta exacta primero
 set "FRONTEND_PATH=C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
-if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
+echo [DEBUG] Probando ruta exacta: %FRONTEND_PATH% >> "%LOGFILE%"
 
-:: Opcion 1: Dentro del backend
-set "FRONTEND_PATH=%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades"
-if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
-
-:: Opcion 2: Al lado del backend
-for %%D in ("%SCRIPT_DIR%\..") do set "PARENT_DIR=%%~fD"
-set "FRONTEND_PATH=%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
-if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
-
-:: Pedir manual
-echo [ADVERTENCIA] No se encontro el frontend automaticamente.
-echo.
-set /p MANUAL_PATH="Pega la ruta de la carpeta con index.html: "
-set "MANUAL_PATH=%MANUAL_PATH:"=%"
-set "FRONTEND_PATH=%MANUAL_PATH%"
-if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
-if exist "%FRONTEND_PATH%\frontend-incapacidades\index.html" (
-    set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades"
+if exist "%FRONTEND_PATH%\index.html" (
+    echo [OK] Frontend encontrado en ruta exacta >> "%LOGFILE%"
     goto frontend_ok
 )
-echo [ERROR] No se encontro index.html.
+
+rem Opcion 1: Dentro del backend
+set "FRONTEND_PATH=%SCRIPT_DIR%\frontend_incapacidades\frontend-incapacidades"
+echo [DEBUG] Probando opcion 1: %FRONTEND_PATH% >> "%LOGFILE%"
+if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
+
+rem Opcion 2: Al lado del backend
+for %%D in ("%SCRIPT_DIR%\..") do set "PARENT_DIR=%%~fD"
+set "FRONTEND_PATH=%PARENT_DIR%\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades"
+echo [DEBUG] Probando opcion 2: %FRONTEND_PATH% >> "%LOGFILE%"
+if exist "%FRONTEND_PATH%\index.html" goto frontend_ok
+
+rem Opcion 3: Buscar en perfil de usuario
+set "USERPROFILE_PATH=%USERPROFILE%"
+echo [DEBUG] Buscando en perfil: %USERPROFILE_PATH% >> "%LOGFILE%"
+for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend-incapacidades\index.html" 2^>nul') do (
+    set "FRONTEND_PATH=%%~dpa"
+    set "FRONTEND_PATH=!FRONTEND_PATH:~0,-1!"
+    echo [OK] Frontend encontrado en perfil: !FRONTEND_PATH! >> "%LOGFILE%"
+    goto frontend_ok
+)
+
+rem Opcion 4: Buscar carpeta especifica
+for /f "delims=" %%a in ('dir /s /b "%USERPROFILE_PATH%\frontend_incapacidades\frontend-incapacidades\index.html" 2^>nul') do (
+    set "FRONTEND_PATH=%%~dpa"
+    set "FRONTEND_PATH=!FRONTEND_PATH:~0,-1!"
+    echo [OK] Frontend encontrado en busqueda: !FRONTEND_PATH! >> "%LOGFILE%"
+    goto frontend_ok
+)
+
+rem Si no se encontro, pedir manual
+echo [ADVERTENCIA] No se encontro el frontend automaticamente.
+echo [ADVERTENCIA] No se encontro el frontend automaticamente. >> "%LOGFILE%"
+echo.
+echo Escribe o pega la ruta COMPLETA de la carpeta que contiene index.html
+echo Ejemplo: C:\Users\Nombre\...\frontend-incapacidades
+echo.
+set /p MANUAL_PATH="Ruta del frontend: "
+echo [DEBUG] Usuario ingreso: %MANUAL_PATH% >> "%LOGFILE%"
+
+rem QUITAR COMILLAS que Windows agrega al arrastrar
+set "MANUAL_PATH=%MANUAL_PATH:"=%"
+echo [DEBUG] Sin comillas: %MANUAL_PATH% >> "%LOGFILE%"
+
+set "FRONTEND_PATH=%MANUAL_PATH%"
+
+if exist "%FRONTEND_PATH%\index.html" (
+    echo [OK] index.html encontrado directamente >> "%LOGFILE%"
+    goto frontend_ok
+)
+
+if exist "%FRONTEND_PATH%\frontend-incapacidades\index.html" (
+    set "FRONTEND_PATH=%FRONTEND_PATH%\frontend-incapacidades"
+    echo [OK] Corregido a subcarpeta frontend-incapacidades >> "%LOGFILE%"
+    goto frontend_ok
+)
+
+if exist "%FRONTEND_PATH%\frontend_incapacidades\frontend-incapacidades\index.html" (
+    set "FRONTEND_PATH=%FRONTEND_PATH%\frontend_incapacidades\frontend-incapacidades"
+    echo [OK] Corregido a doble subcarpeta >> "%LOGFILE%"
+    goto frontend_ok
+)
+
+echo [ERROR] No se encontro index.html en ninguna ubicacion.
+echo [ERROR] No se encontro index.html. Ruta final: %FRONTEND_PATH% >> "%LOGFILE%"
 pause
 cmd /k
 
 :frontend_ok
 echo [OK] Backend: %BACKEND_PATH%
 echo [OK] Frontend: %FRONTEND_PATH%
+echo [OK] Backend: %BACKEND_PATH% >> "%LOGFILE%"
+echo [OK] Frontend: %FRONTEND_PATH% >> "%LOGFILE%"
 echo.
 
-:: ============================================================
-:: VERIFICAR BACKEND
-:: ============================================================
+rem ============================================================
+rem PASO 2: VERIFICAR BACKEND
+rem ============================================================
+echo [2] Verificando estructura backend...
+echo [2] Verificando estructura backend... >> "%LOGFILE%"
 if not exist "%BACKEND_PATH%\Backend_ms-auth" (
     echo [ERROR] No se encontro Backend_ms-auth en: %BACKEND_PATH%
+    echo [ERROR] No se encontro Backend_ms-auth >> "%LOGFILE%"
     pause
     cmd /k
 )
 echo [OK] Estructura backend verificada.
+echo [OK] Estructura backend verificada. >> "%LOGFILE%"
 echo.
 
-:: ============================================================
-:: INSTALAR MICROSERVICIOS
-:: ============================================================
+rem ============================================================
+rem PASO 3: VERIFICAR PHP
+rem ============================================================
+echo [3] Verificando PHP...
+echo [3] Verificando PHP... >> "%LOGFILE%"
 
-:: 1. ms-auth
-echo [1/5] Instalando ms-auth...
+"C:\xampp\php\php.exe" -v >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] PHP no encontrado en C:\xampp\php\php.exe
+    echo [ERROR] PHP no encontrado >> "%LOGFILE%"
+    echo.
+    echo Posibles soluciones:
+    echo 1. Instala XAMPP desde https://www.apachefriends.org/
+    echo 2. O si XAMPP esta en otra unidad (D:, E:, etc.),
+    echo    edita este archivo y cambia la linea:
+    echo    set "PHP_PATH=C:\xampp\php"
+    echo    por tu ruta real.
+    echo.
+    pause
+    cmd /k
+)
+echo [OK] PHP detectado.
+echo [OK] PHP detectado. >> "%LOGFILE%"
+echo.
+
+rem ============================================================
+rem PASO 4: VERIFICAR COMPOSER
+rem ============================================================
+echo [4] Verificando Composer...
+echo [4] Verificando Composer... >> "%LOGFILE%"
+
+composer -V >nul 2>&1
+if errorlevel 1 (
+    echo [ADVERTENCIA] Composer no esta en PATH. Buscando...
+    echo [ADVERTENCIA] Composer no en PATH >> "%LOGFILE%"
+    
+    if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
+        set "COMPOSER_CMD=C:\ProgramData\ComposerSetup\bin\composer.bat"
+        echo [OK] Composer encontrado en ruta alternativa.
+        echo [OK] Composer alternativo >> "%LOGFILE%"
+        goto composer_ok
+    )
+    
+    if exist "C:\xampp\php\composer.phar" (
+        set "COMPOSER_CMD=C:\xampp\php\php.exe C:\xampp\php\composer.phar"
+        echo [OK] Composer encontrado como phar.
+        echo [OK] Composer phar >> "%LOGFILE%"
+        goto composer_ok
+    )
+    
+    echo [ERROR] Composer no encontrado en ninguna ruta.
+    echo [ERROR] Composer no encontrado >> "%LOGFILE%"
+    echo.
+    echo Descarga Composer desde: https://getcomposer.org/download/
+    echo.
+    pause
+    cmd /k
+)
+
+set "COMPOSER_CMD=composer"
+echo [OK] Composer detectado.
+echo [OK] Composer detectado. >> "%LOGFILE%"
+echo.
+
+:composer_ok
+echo [DEBUG] Usando Composer: %COMPOSER_CMD% >> "%LOGFILE%"
+
+rem ============================================================
+rem PASO 5: INSTALAR MICROSERVICIOS
+rem ============================================================
+
+rem 5.1 ms-auth
+echo [5/9] Instalando ms-auth...
+echo [5/9] Instalando ms-auth... >> "%LOGFILE%"
+if not exist "%BACKEND_PATH%\Backend_ms-auth\ms-auth" (
+    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-auth\ms-auth
+    echo [ERROR] Falta Backend_ms-auth\ms-auth >> "%LOGFILE%"
+    pause
+    cmd /k
+)
 cd /d "%BACKEND_PATH%\Backend_ms-auth\ms-auth"
-if %errorlevel% neq 0 (
-    echo [ERROR] No se pudo entrar a Backend_ms-auth\ms-auth
+if errorlevel 1 (
+    echo [ERROR] No se pudo entrar a ms-auth
+    echo [ERROR] No se pudo entrar a ms-auth >> "%LOGFILE%"
     pause
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
 %COMPOSER_CMD% install --no-interaction
-if %errorlevel% neq 0 (
-    echo [ERROR] Fallo composer install en ms-auth
+if errorlevel 1 (
+    echo [ERROR] Fallo composer install en ms-auth. Revisa tu internet.
+    echo [ERROR] Fallo composer ms-auth >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -214,20 +243,30 @@ echo DB_NAME=db_auth>> .env
 echo DB_USER=root>> .env
 echo DB_PASS=>> .env
 echo [OK] ms-auth listo.
+echo [OK] ms-auth listo. >> "%LOGFILE%"
 echo.
 
-:: 2. ms-empleados
-echo [2/5] Instalando ms-empleados...
+rem 5.2 ms-empleados
+echo [6/9] Instalando ms-empleados...
+echo [6/9] Instalando ms-empleados... >> "%LOGFILE%"
+if not exist "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados" (
+    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-empleados\ms-empleados
+    echo [ERROR] Falta Backend_ms-empleados >> "%LOGFILE%"
+    pause
+    cmd /k
+)
 cd /d "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados"
-if %errorlevel% neq 0 (
-    echo [ERROR] No se pudo entrar a Backend_ms-empleados\ms-empleados
+if errorlevel 1 (
+    echo [ERROR] No se pudo entrar a ms-empleados
+    echo [ERROR] No se pudo entrar a ms-empleados >> "%LOGFILE%"
     pause
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
 %COMPOSER_CMD% install --no-interaction
-if %errorlevel% neq 0 (
-    echo [ERROR] Fallo composer install en ms-empleados
+if errorlevel 1 (
+    echo [ERROR] Fallo composer install en ms-empleados.
+    echo [ERROR] Fallo composer ms-empleados >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -237,20 +276,30 @@ echo DB_USER=root>> .env
 echo DB_PASS=>> .env
 echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
 echo [OK] ms-empleados listo.
+echo [OK] ms-empleados listo. >> "%LOGFILE%"
 echo.
 
-:: 3. ms-incapacidades
-echo [3/5] Instalando ms-incapacidades...
+rem 5.3 ms-incapacidades
+echo [7/9] Instalando ms-incapacidades...
+echo [7/9] Instalando ms-incapacidades... >> "%LOGFILE%"
+if not exist "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades" (
+    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades
+    echo [ERROR] Falta Backend_ms-incapacidades >> "%LOGFILE%"
+    pause
+    cmd /k
+)
 cd /d "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades"
-if %errorlevel% neq 0 (
-    echo [ERROR] No se pudo entrar a Backend_ms-incapacidades\ms-incapacidades
+if errorlevel 1 (
+    echo [ERROR] No se pudo entrar a ms-incapacidades
+    echo [ERROR] No se pudo entrar a ms-incapacidades >> "%LOGFILE%"
     pause
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
 %COMPOSER_CMD% install --no-interaction
-if %errorlevel% neq 0 (
-    echo [ERROR] Fallo composer install en ms-incapacidades
+if errorlevel 1 (
+    echo [ERROR] Fallo composer install en ms-incapacidades.
+    echo [ERROR] Fallo composer ms-incapacidades >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -261,20 +310,30 @@ echo DB_PASS=>> .env
 echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
 echo MS_EMPLEADOS_URL=http://127.0.0.1:8002>> .env
 echo [OK] ms-incapacidades listo.
+echo [OK] ms-incapacidades listo. >> "%LOGFILE%"
 echo.
 
-:: 4. ms-seguimiento
-echo [4/5] Instalando ms-seguimiento...
+rem 5.4 ms-seguimiento
+echo [8/9] Instalando ms-seguimiento...
+echo [8/9] Instalando ms-seguimiento... >> "%LOGFILE%"
+if not exist "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento" (
+    echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento
+    echo [ERROR] Falta Backend_ms-seguimiento >> "%LOGFILE%"
+    pause
+    cmd /k
+)
 cd /d "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento"
-if %errorlevel% neq 0 (
-    echo [ERROR] No se pudo entrar a Backend_ms-seguimiento\ms-seguimiento
+if errorlevel 1 (
+    echo [ERROR] No se pudo entrar a ms-seguimiento
+    echo [ERROR] No se pudo entrar a ms-seguimiento >> "%LOGFILE%"
     pause
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
 %COMPOSER_CMD% install --no-interaction
-if %errorlevel% neq 0 (
-    echo [ERROR] Fallo composer install en ms-seguimiento
+if errorlevel 1 (
+    echo [ERROR] Fallo composer install en ms-seguimiento.
+    echo [ERROR] Fallo composer ms-seguimiento >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -286,42 +345,60 @@ echo MS_AUTH_URL=http://127.0.0.1:8001>> .env
 echo MS_INCAPACIDADES_URL=http://127.0.0.1:8003>> .env
 echo APP_PORT=8004>> .env
 echo [OK] ms-seguimiento listo.
+echo [OK] ms-seguimiento listo. >> "%LOGFILE%"
 echo.
 
-:: ============================================================
-:: BASE DE DATOS
-:: ============================================================
-echo [5/5] Creando bases de datos...
+rem ============================================================
+rem PASO 6: CREAR BASE DE DATOS
+rem ============================================================
+echo [9/9] Creando bases de datos...
+echo [9/9] Creando bases de datos... >> "%LOGFILE%"
 cd /d "%BACKEND_PATH%"
-"%PHP_EXE%" -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR'; }" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [ADVERTENCIA] MySQL no conecta. Importa setup.sql manualmente en phpMyAdmin.
+"C:\xampp\php\php.exe" -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR'; }" >nul 2>&1
+if errorlevel 1 (
+    echo [ADVERTENCIA] No se pudo conectar a MySQL.
+    echo [ADVERTENCIA] MySQL no conecta >> "%LOGFILE%"
+    echo         Solucion manual:
+    echo         1. Abre XAMPP Control Panel
+    echo         2. Dale Start a MySQL
+    echo         3. Importa setup.sql en phpMyAdmin
 ) else (
     mysql -u root -e "source setup.sql" 2>nul
-    if %errorlevel% neq 0 (
+    if errorlevel 1 (
         echo [ADVERTENCIA] Fallo setup.sql. Importalo manualmente.
+        echo [ADVERTENCIA] Fallo setup.sql >> "%LOGFILE%"
     ) else (
         echo [OK] Bases de datos creadas.
+        echo [OK] Bases de datos creadas. >> "%LOGFILE%"
     )
 )
 echo.
 
-:: ============================================================
-:: GUARDAR RUTAS
-:: ============================================================
+rem ============================================================
+rem PASO 7: GUARDAR RUTAS
+rem ============================================================
+echo Guardando rutas para INICIAR_SERVIDORES.bat...
+echo Guardando rutas... >> "%LOGFILE%"
 echo BACKEND_PATH=%BACKEND_PATH%> "%BACKEND_PATH%\.paths.ini"
 echo FRONTEND_PATH=%FRONTEND_PATH%>> "%BACKEND_PATH%\.paths.ini"
 echo [OK] Rutas guardadas.
+echo [OK] Rutas guardadas. >> "%LOGFILE%"
+echo.
 
-:: ============================================================
-:: FIN
-:: ============================================================
+rem ============================================================
+rem FIN
+rem ============================================================
 echo ============================================
 echo  INSTALACION COMPLETA!
 echo ============================================
 echo.
+echo Para iniciar: Doble clic en INICIAR_SERVIDORES.bat
 echo Accede: http://127.0.0.1:8080
-echo Credenciales: admin / admin123
 echo.
+echo Credenciales:
+echo   admin / admin123
+echo   gestionhumana / gh123
+echo.
+echo [FINALIZADO] %date% %time% >> "%LOGFILE%"
 pause
 cmd /k
