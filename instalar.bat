@@ -1,9 +1,13 @@
 @echo off
+setlocal EnableDelayedExpansion
 
 echo ============================================
 echo  INSTALADOR - Sistema de Gestion de Incapacidades
 echo  Corporate Solutions
 echo ============================================
+echo.
+echo [INFO] Este proceso puede tardar 2-3 minutos.
+echo [INFO] NO CIERRES esta ventana.
 echo.
 
 rem ============================================================
@@ -65,8 +69,7 @@ if exist "%FRONTEND_PATH%\frontend-incapacidades\index.html" (
 )
 
 echo ERROR: No se encontro index.html.
-pause
-exit
+goto error_pause
 
 :frontend_ok
 echo [OK] Backend: %BACKEND_PATH%
@@ -79,8 +82,7 @@ rem ============================================================
 echo [1/7] Verificando estructura backend...
 if not exist "%BACKEND_PATH%\Backend_ms-auth" (
     echo ERROR: No se encontro Backend_ms-auth
-    pause
-    exit
+    goto error_pause
 )
 echo [OK] Estructura backend verificada.
 echo.
@@ -92,8 +94,7 @@ echo [2/7] Verificando PHP...
 "C:\xampp\php\php.exe" -v >nul 2>&1
 if errorlevel 1 (
     echo ERROR: PHP no encontrado. Instala XAMPP.
-    pause
-    exit
+    goto error_pause
 )
 echo [OK] PHP detectado.
 echo.
@@ -104,10 +105,8 @@ rem ============================================================
 echo [3/7] Verificando Composer...
 composer -V >nul 2>&1
 if errorlevel 1 (
-    echo ERROR: Composer no encontrado.
-    echo Descarga desde: https://getcomposer.org/download/
-    pause
-    exit
+    echo ERROR: Composer no encontrado. Descarga desde getcomposer.org
+    goto error_pause
 )
 echo [OK] Composer detectado.
 echo.
@@ -120,16 +119,18 @@ echo     (puede tardar 20-30 segundos, espera...)
 cd /d "%BACKEND_PATH%\Backend_ms-auth\ms-auth"
 if errorlevel 1 (
     echo ERROR: No se pudo entrar a ms-auth
-    pause
-    exit
+    goto error_pause
 )
 if exist composer.lock del composer.lock >nul 2>&1
-call composer install --no-interaction
+
+rem TRUCO ANTI-CIERRE: Ejecutar composer con START /WAIT y CMD /C
+echo [INFO] Ejecutando composer install para ms-auth...
+start /wait /b cmd /c "composer install --no-interaction 2>&1"
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-auth
-    pause
-    exit
+    goto error_pause
 )
+
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_auth>> .env
 echo DB_USER=root>> .env
@@ -145,16 +146,16 @@ echo     (puede tardar 20-30 segundos, espera...)
 cd /d "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados"
 if errorlevel 1 (
     echo ERROR: No se pudo entrar a ms-empleados
-    pause
-    exit
+    goto error_pause
 )
 if exist composer.lock del composer.lock >nul 2>&1
-call composer install --no-interaction
+
+start /wait /b cmd /c "composer install --no-interaction 2>&1"
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-empleados
-    pause
-    exit
+    goto error_pause
 )
+
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_empleados>> .env
 echo DB_USER=root>> .env
@@ -171,16 +172,16 @@ echo     (puede tardar 20-30 segundos, espera...)
 cd /d "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades"
 if errorlevel 1 (
     echo ERROR: No se pudo entrar a ms-incapacidades
-    pause
-    exit
+    goto error_pause
 )
 if exist composer.lock del composer.lock >nul 2>&1
-call composer install --no-interaction
+
+start /wait /b cmd /c "composer install --no-interaction 2>&1"
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-incapacidades
-    pause
-    exit
+    goto error_pause
 )
+
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_incapacidades>> .env
 echo DB_USER=root>> .env
@@ -198,16 +199,16 @@ echo     (puede tardar 20-30 segundos, espera...)
 cd /d "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento"
 if errorlevel 1 (
     echo ERROR: No se pudo entrar a ms-seguimiento
-    pause
-    exit
+    goto error_pause
 )
 if exist composer.lock del composer.lock >nul 2>&1
-call composer install --no-interaction
+
+start /wait /b cmd /c "composer install --no-interaction 2>&1"
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-seguimiento
-    pause
-    exit
+    goto error_pause
 )
+
 echo DB_HOST=localhost> .env
 echo DB_NAME=db_seguimiento>> .env
 echo DB_USER=root>> .env
@@ -260,4 +261,17 @@ echo Credenciales:
 echo   admin / admin123
 echo   gestionhumana / gh123
 echo.
-pause
+goto final_pause
+
+:error_pause
+echo.
+echo ============================================
+echo  ERROR EN LA INSTALACION
+echo ============================================
+echo.
+
+:final_pause
+echo.
+echo Presiona cualquier tecla para salir...
+pause >nul
+cmd /k
