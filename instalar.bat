@@ -76,6 +76,26 @@ exit
 echo.
 
 rem ============================================================
+rem DETECTAR MySQL (hermano de PHP en XAMPP)
+rem ============================================================
+echo Detectando MySQL...
+set MYSQL_BIN=%PHP_PATH%\..\mysql\bin
+if exist "%MYSQL_BIN%\mysql.exe" (
+    set PATH=%MYSQL_BIN%;%PATH%
+    echo OK MySQL encontrado en %MYSQL_BIN%
+) else (
+    for /f "delims=" %%a in ('where mysql 2^>nul') do (
+        set MYSQL_BIN=%%~dpa
+        set PATH=%MYSQL_BIN%;%PATH%
+        echo OK MySQL encontrado en PATH
+        goto mysql_ok
+    )
+    echo ADVERTENCIA: No se encontro mysql.exe. Buscando en ejecucion...
+)
+:mysql_ok
+echo.
+
+rem ============================================================
 rem DETECTAR COMPOSER AUTOMATICAMENTE
 rem ============================================================
 echo Detectando Composer...
@@ -316,21 +336,35 @@ echo OK ms-seguimiento listo.
 echo.
 
 rem ============================================================
-rem CREAR BASE DE DATOS
+rem CREAR BASE DE DATOS  (CORREGIDO)
 rem ============================================================
 echo Creando bases de datos...
 cd /d %BACKEND_PATH%
-%PHP_EXE% -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR'; }" >nul 2>&1
+
+rem Verificar que setup.sql existe
+if not exist "%BACKEND_PATH%\setup.sql" (
+    echo ERROR: No se encontro setup.sql en %BACKEND_PATH%
+    pause
+    exit
+)
+
+rem Verificar conexion a MySQL (PDO con exit code real)
+%PHP_EXE% -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); exit(0); } catch (Exception $e) { exit(1); }" >nul 2>&1
 if errorlevel 1 (
     echo ADVERTENCIA: MySQL no conecta.
     echo Abre XAMPP, inicia MySQL e importa setup.sql manualmente.
+    pause
+    exit
+)
+
+rem Ejecutar setup.sql (ahora mysql.exe SI esta en PATH)
+mysql -u root -e "source %BACKEND_PATH%\setup.sql"
+if errorlevel 1 (
+    echo ADVERTENCIA: Fallo setup.sql. Importalo manualmente.
+    pause
+    exit
 ) else (
-    mysql -u root -e "source setup.sql" 2>nul
-    if errorlevel 1 (
-        echo ADVERTENCIA: Fallo setup.sql. Importalo manualmente.
-    ) else (
-        echo OK Bases de datos creadas.
-    )
+    echo OK Bases de datos creadas.
 )
 echo.
 
