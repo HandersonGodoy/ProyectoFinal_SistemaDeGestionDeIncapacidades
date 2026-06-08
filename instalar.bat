@@ -5,10 +5,8 @@ rem TRUCO ANTI-CIERRE: Si se ejecuta con doble clic, reabrir en CMD
 rem ============================================================
 if "%1"=="reabrir" goto inicio_real
 
-rem Detectar si se ejecuta con doble clic (no hay ventana padre CMD)
 echo %cmdcmdline% | find /i "%~nx0" >nul 2>&1
 if %errorlevel% equ 0 (
-    rem Se ejecuto con doble clic, reabrir en CMD con /k
     cmd /k "%~f0" reabrir
     exit
 )
@@ -22,14 +20,132 @@ echo ============================================
 echo.
 
 rem ============================================================
-rem CONFIGURAR PATH
+rem DETECTAR PHP AUTOMATICAMENTE
 rem ============================================================
-set PHP_PATH=C:\xampp\php
-set COMPOSER_PATH=C:\ProgramData\ComposerSetup\bin
-set PATH=%PHP_PATH%;%COMPOSER_PATH%;%PATH%
+echo Detectando PHP...
+
+set PHP_EXE=
+
+rem Opcion 1: XAMPP en C:
+if exist C:\xampp\php\php.exe (
+    set PHP_EXE=C:\xampp\php\php.exe
+    set PHP_PATH=C:\xampp\php
+    echo OK PHP encontrado en C:\xampp\php
+    goto php_ok
+)
+
+rem Opcion 2: XAMPP en D:
+if exist D:\xampp\php\php.exe (
+    set PHP_EXE=D:\xampp\php\php.exe
+    set PHP_PATH=D:\xampp\php
+    echo OK PHP encontrado en D:\xampp\php
+    goto php_ok
+)
+
+rem Opcion 3: XAMPP en E:
+if exist E:\xampp\php\php.exe (
+    set PHP_EXE=E:\xampp\php\php.exe
+    set PHP_PATH=E:\xampp\php
+    echo OK PHP encontrado en E:\xampp\php
+    goto php_ok
+)
+
+rem Opcion 4: WAMP
+if exist C:\wamp64\bin\php\php.exe (
+    set PHP_EXE=C:\wamp64\bin\php\php.exe
+    set PHP_PATH=C:\wamp64\bin\php
+    echo OK PHP encontrado en WAMP
+    goto php_ok
+)
+
+rem Opcion 5: Buscar en PATH
+for /f "delims=" %%a in ('where php 2^>nul') do (
+    set PHP_EXE=%%a
+    set PHP_PATH=%%~dpa
+    set PHP_PATH=%PHP_PATH:~0,-1%
+    echo OK PHP encontrado en PATH: %%a
+    goto php_ok
+)
+
+echo ERROR: PHP no encontrado.
+echo Instala XAMPP desde https://www.apachefriends.org/
+pause
+exit
+
+:php_ok
+echo.
 
 rem ============================================================
-rem DETECTAR RUTAS
+rem DETECTAR COMPOSER AUTOMATICAMENTE
+rem ============================================================
+echo Detectando Composer...
+
+set COMPOSER_CMD=
+
+rem Opcion 1: Composer en PATH (comando directo)
+for /f "delims=" %%a in ('where composer 2^>nul') do (
+    set COMPOSER_CMD=composer
+    echo OK Composer encontrado en PATH
+    goto composer_ok
+)
+
+rem Opcion 2: Composer en ProgramData
+if exist C:\ProgramData\ComposerSetup\bin\composer.bat (
+    set COMPOSER_CMD=C:\ProgramData\ComposerSetup\bin\composer.bat
+    echo OK Composer encontrado en C:\ProgramData\ComposerSetup\bin
+    goto composer_ok
+)
+
+rem Opcion 3: Composer en XAMPP (php + composer.phar)
+if exist %PHP_PATH%\composer.phar (
+    set COMPOSER_CMD=%PHP_EXE% %PHP_PATH%\composer.phar
+    echo OK Composer encontrado como phar en XAMPP
+    goto composer_ok
+)
+
+rem Opcion 4: Composer en carpeta composer junto a XAMPP
+if exist C:\xampp\composer\composer.bat (
+    set COMPOSER_CMD=C:\xampp\composer\composer.bat
+    echo OK Composer encontrado en C:\xampp\composer
+    goto composer_ok
+)
+
+rem Opcion 5: Composer en Program Files
+if exist C:\Program Files\Composer\bin\composer.bat (
+    set COMPOSER_CMD=C:\Program Files\Composer\bin\composer.bat
+    echo OK Composer encontrado en Program Files
+    goto composer_ok
+)
+
+rem Opcion 6: Composer en AppData (instalacion por usuario)
+if exist %LOCALAPPDATA%\Composer\composer.bat (
+    set COMPOSER_CMD=%LOCALAPPDATA%\Composer\composer.bat
+    echo OK Composer encontrado en AppData
+    goto composer_ok
+)
+
+if exist %APPDATA%\Composer\vendor\bin\composer.bat (
+    set COMPOSER_CMD=%APPDATA%\Composer\vendor\bin\composer.bat
+    echo OK Composer encontrado en AppData\vendor
+    goto composer_ok
+)
+
+echo ERROR: Composer no encontrado.
+echo Descarga desde: https://getcomposer.org/download/
+pause
+exit
+
+:composer_ok
+echo Usando Composer: %COMPOSER_CMD%
+echo.
+
+rem ============================================================
+rem CONFIGURAR PATH CON PHP Y COMPOSER
+rem ============================================================
+set PATH=%PHP_PATH%;%PATH%
+
+rem ============================================================
+rem DETECTAR RUTAS DEL PROYECTO
 rem ============================================================
 set SCRIPT_DIR=%~dp0
 set SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
@@ -95,34 +211,6 @@ echo OK Backend verificado.
 echo.
 
 rem ============================================================
-rem VERIFICAR PHP
-rem ============================================================
-echo Verificando PHP...
-"C:\xampp\php\php.exe" -v >nul 2>&1
-if errorlevel 1 (
-    echo ERROR: PHP no encontrado.
-    echo Instala XAMPP desde https://www.apachefriends.org/
-    pause
-    exit
-)
-echo OK PHP detectado.
-echo.
-
-rem ============================================================
-rem VERIFICAR COMPOSER
-rem ============================================================
-echo Verificando Composer...
-composer -V >nul 2>&1
-if errorlevel 1 (
-    echo ERROR: Composer no encontrado.
-    echo Descarga desde: https://getcomposer.org/download/
-    pause
-    exit
-)
-echo OK Composer detectado.
-echo.
-
-rem ============================================================
 rem INSTALAR MICROSERVICIOS
 rem ============================================================
 echo ============================================
@@ -142,7 +230,7 @@ if errorlevel 1 (
 )
 if exist composer.lock del composer.lock >nul 2>&1
 echo Ejecutando composer install para ms-auth...
-call composer install --no-interaction
+call %COMPOSER_CMD% install --no-interaction
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-auth
     pause
@@ -164,7 +252,7 @@ if errorlevel 1 (
 )
 if exist composer.lock del composer.lock >nul 2>&1
 echo Ejecutando composer install para ms-empleados...
-call composer install --no-interaction
+call %COMPOSER_CMD% install --no-interaction
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-empleados
     pause
@@ -187,7 +275,7 @@ if errorlevel 1 (
 )
 if exist composer.lock del composer.lock >nul 2>&1
 echo Ejecutando composer install para ms-incapacidades...
-call composer install --no-interaction
+call %COMPOSER_CMD% install --no-interaction
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-incapacidades
     pause
@@ -211,7 +299,7 @@ if errorlevel 1 (
 )
 if exist composer.lock del composer.lock >nul 2>&1
 echo Ejecutando composer install para ms-seguimiento...
-call composer install --no-interaction
+call %COMPOSER_CMD% install --no-interaction
 if errorlevel 1 (
     echo ERROR: Fallo composer install en ms-seguimiento
     pause
@@ -232,7 +320,7 @@ rem CREAR BASE DE DATOS
 rem ============================================================
 echo Creando bases de datos...
 cd /d %BACKEND_PATH%
-"C:\xampp\php\php.exe" -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR'; }" >nul 2>&1
+%PHP_EXE% -r "try { new PDO('mysql:host=localhost;dbname=mysql', 'root', ''); echo 'OK'; } catch (Exception $e) { echo 'ERROR'; }" >nul 2>&1
 if errorlevel 1 (
     echo ADVERTENCIA: MySQL no conecta.
     echo Abre XAMPP, inicia MySQL e importa setup.sql manualmente.
