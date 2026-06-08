@@ -17,8 +17,9 @@ echo  INSTALADOR - Sistema de Gestion de Incapacidades
 echo  Corporate Solutions
 echo ============================================
 echo.
-echo [INFO] Si esta ventana se cierra, revisa:
-echo        Instalar_LOG.txt en esta misma carpeta
+echo [INFO] Este proceso puede tardar 5-10 minutos.
+echo [INFO] No cierres esta ventana.
+echo [INFO] Si se cierra, revisa Instalar_LOG.txt
 echo.
 
 rem ============================================================
@@ -143,7 +144,6 @@ rem ============================================================
 echo [3] Verificando PHP...
 echo [3] Verificando PHP... >> "%LOGFILE%"
 
-rem Ejecutar PHP y capturar salida en variable (no redirigir a nul)
 for /f "delims=" %%a in ('"C:\xampp\php\php.exe" -v 2^>^&1') do (
     echo [DEBUG] PHP salida: %%a >> "%LOGFILE%"
 )
@@ -176,12 +176,11 @@ echo [OK] PHP detectado. >> "%LOGFILE%"
 echo.
 
 rem ============================================================
-rem PASO 4: VERIFICAR COMPOSER (METODO SEGURO)
+rem PASO 4: VERIFICAR COMPOSER
 rem ============================================================
 echo [4] Verificando Composer...
 echo [4] Verificando Composer... >> "%LOGFILE%"
 
-rem Metodo 1: Buscar con WHERE (no ejecuta, solo busca)
 where composer >nul 2>&1
 set WHERE_ERROR=%errorlevel%
 echo [DEBUG] WHERE composer errorlevel: %WHERE_ERROR% >> "%LOGFILE%"
@@ -193,7 +192,6 @@ if %WHERE_ERROR% equ 0 (
     goto composer_ok
 )
 
-rem Metodo 2: Buscar en ruta alternativa
 if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
     echo [OK] Composer encontrado en ruta alternativa.
     echo [OK] Composer alternativo >> "%LOGFILE%"
@@ -201,7 +199,6 @@ if exist "C:\ProgramData\ComposerSetup\bin\composer.bat" (
     goto composer_ok
 )
 
-rem Metodo 3: Buscar como phar en XAMPP
 if exist "C:\xampp\php\composer.phar" (
     echo [OK] Composer encontrado como phar.
     echo [OK] Composer phar >> "%LOGFILE%"
@@ -209,7 +206,6 @@ if exist "C:\xampp\php\composer.phar" (
     goto composer_ok
 )
 
-rem Metodo 4: Buscar en otras ubicaciones comunes
 if exist "C:\xampp\composer\composer.bat" (
     echo [OK] Composer encontrado en C:\xampp\composer\
     echo [OK] Composer en xampp\composer >> "%LOGFILE%"
@@ -241,7 +237,7 @@ rem PASO 5: INSTALAR MICROSERVICIOS
 rem ============================================================
 
 rem 5.1 ms-auth
-echo [5/9] Instalando ms-auth...
+echo [5/9] Instalando ms-auth... (puede tardar varios minutos)
 echo [5/9] Instalando ms-auth... >> "%LOGFILE%"
 if not exist "%BACKEND_PATH%\Backend_ms-auth\ms-auth" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-auth\ms-auth
@@ -257,10 +253,15 @@ if errorlevel 1 (
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
-%COMPOSER_CMD% install --no-interaction
-if errorlevel 1 (
+echo [INFO] Ejecutando composer install para ms-auth...
+echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
+echo [INFO] Ejecutando composer install ms-auth >> "%LOGFILE%"
+%COMPOSER_CMD% install --no-interaction 2>&1
+set COMPOSER_RESULT=%errorlevel%
+echo [DEBUG] Composer ms-auth result: %COMPOSER_RESULT% >> "%LOGFILE%"
+if %COMPOSER_RESULT% neq 0 (
     echo [ERROR] Fallo composer install en ms-auth. Revisa tu internet.
-    echo [ERROR] Fallo composer ms-auth >> "%LOGFILE%"
+    echo [ERROR] Fallo composer ms-auth, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -273,7 +274,7 @@ echo [OK] ms-auth listo. >> "%LOGFILE%"
 echo.
 
 rem 5.2 ms-empleados
-echo [6/9] Instalando ms-empleados...
+echo [6/9] Instalando ms-empleados... (puede tardar varios minutos)
 echo [6/9] Instalando ms-empleados... >> "%LOGFILE%"
 if not exist "%BACKEND_PATH%\Backend_ms-empleados\ms-empleados" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-empleados\ms-empleados
@@ -289,10 +290,15 @@ if errorlevel 1 (
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
-%COMPOSER_CMD% install --no-interaction
-if errorlevel 1 (
+echo [INFO] Ejecutando composer install para ms-empleados...
+echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
+echo [INFO] Ejecutando composer install ms-empleados >> "%LOGFILE%"
+%COMPOSER_CMD% install --no-interaction 2>&1
+set COMPOSER_RESULT=%errorlevel%
+echo [DEBUG] Composer ms-empleados result: %COMPOSER_RESULT% >> "%LOGFILE%"
+if %COMPOSER_RESULT% neq 0 (
     echo [ERROR] Fallo composer install en ms-empleados.
-    echo [ERROR] Fallo composer ms-empleados >> "%LOGFILE%"
+    echo [ERROR] Fallo composer ms-empleados, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -306,7 +312,7 @@ echo [OK] ms-empleados listo. >> "%LOGFILE%"
 echo.
 
 rem 5.3 ms-incapacidades
-echo [7/9] Instalando ms-incapacidades...
+echo [7/9] Instalando ms-incapacidades... (puede tardar varios minutos)
 echo [7/9] Instalando ms-incapacidades... >> "%LOGFILE%"
 if not exist "%BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-incapacidades\ms-incapacidades
@@ -322,10 +328,15 @@ if errorlevel 1 (
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
-%COMPOSER_CMD% install --no-interaction
-if errorlevel 1 (
+echo [INFO] Ejecutando composer install para ms-incapacidades...
+echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
+echo [INFO] Ejecutando composer install ms-incapacidades >> "%LOGFILE%"
+%COMPOSER_CMD% install --no-interaction 2>&1
+set COMPOSER_RESULT=%errorlevel%
+echo [DEBUG] Composer ms-incapacidades result: %COMPOSER_RESULT% >> "%LOGFILE%"
+if %COMPOSER_RESULT% neq 0 (
     echo [ERROR] Fallo composer install en ms-incapacidades.
-    echo [ERROR] Fallo composer ms-incapacidades >> "%LOGFILE%"
+    echo [ERROR] Fallo composer ms-incapacidades, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
@@ -340,7 +351,7 @@ echo [OK] ms-incapacidades listo. >> "%LOGFILE%"
 echo.
 
 rem 5.4 ms-seguimiento
-echo [8/9] Instalando ms-seguimiento...
+echo [8/9] Instalando ms-seguimiento... (puede tardar varios minutos)
 echo [8/9] Instalando ms-seguimiento... >> "%LOGFILE%"
 if not exist "%BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento" (
     echo [ERROR] No existe: %BACKEND_PATH%\Backend_ms-seguimiento\ms-seguimiento
@@ -356,10 +367,15 @@ if errorlevel 1 (
     cmd /k
 )
 if exist composer.lock del composer.lock >nul 2>&1
-%COMPOSER_CMD% install --no-interaction
-if errorlevel 1 (
+echo [INFO] Ejecutando composer install para ms-seguimiento...
+echo [INFO] Esto puede tardar 2-5 minutos. No cierres la ventana.
+echo [INFO] Ejecutando composer install ms-seguimiento >> "%LOGFILE%"
+%COMPOSER_CMD% install --no-interaction 2>&1
+set COMPOSER_RESULT=%errorlevel%
+echo [DEBUG] Composer ms-seguimiento result: %COMPOSER_RESULT% >> "%LOGFILE%"
+if %COMPOSER_RESULT% neq 0 (
     echo [ERROR] Fallo composer install en ms-seguimiento.
-    echo [ERROR] Fallo composer ms-seguimiento >> "%LOGFILE%"
+    echo [ERROR] Fallo composer ms-seguimiento, errorlevel: %COMPOSER_RESULT% >> "%LOGFILE%"
     pause
     cmd /k
 )
