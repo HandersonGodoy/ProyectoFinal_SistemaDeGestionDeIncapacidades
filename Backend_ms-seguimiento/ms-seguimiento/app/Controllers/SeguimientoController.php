@@ -59,7 +59,7 @@ class SeguimientoController
         if (!$seguimiento) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Seguimiento no encontrado'
+                'message' => 'Seguimiento no encontrado, verificalo por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -94,7 +94,7 @@ class SeguimientoController
         if (!$fecha) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Formato de fecha inválido. Use YYYY-MM-DD'
+                'message' => 'Formato de fecha invalido, por favor usa YYYY-MM-DD'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -113,7 +113,7 @@ class SeguimientoController
         if (!$this->validarIncapacidad((int)$data['incapacidad_id'], $token)) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'La incapacidad no existe'
+                'message' => 'La incapacidad no existe, verficala por favor'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -129,7 +129,7 @@ class SeguimientoController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Seguimiento registrado exitosamente',
+            'message' => 'Seguimiento registrado exitosamente, cargado al sistema',
             'data' => $seguimiento
         ]));
 
@@ -144,7 +144,7 @@ class SeguimientoController
         if (!$seguimiento) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Seguimiento no encontrado'
+                'message' => 'Seguimiento no encontrado, verificalo por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -157,7 +157,7 @@ class SeguimientoController
             if (!$fecha) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'Formato de fecha inválido. Use YYYY-MM-DD'
+                    'message' => 'Formato de fecha invalido, por favor usa YYYY-MM-DD'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -178,7 +178,7 @@ class SeguimientoController
             if (!in_array($data['estado'], $estadosPermitidos)) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'Estado inválido'
+                    'message' => 'Estado invalido, verificalo por favor'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -190,7 +190,7 @@ class SeguimientoController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Seguimiento actualizado exitosamente',
+            'message' => 'Seguimiento actualizado exitosamente, cargado al sistema',
             'data' => $seguimiento
         ]));
 
@@ -204,7 +204,7 @@ class SeguimientoController
         if (!$seguimiento) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Seguimiento no encontrado'
+                'message' => 'Seguimiento no encontrado, verificalo por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -216,7 +216,7 @@ class SeguimientoController
         if (empty($data['estado']) || !in_array($data['estado'], $estadosPermitidos)) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Estado inválido'
+                'message' => 'Estado inválido, verifica por favor'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -227,7 +227,7 @@ class SeguimientoController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Estado actualizado correctamente',
+            'message' => 'Estado actualizado correctamente, cargado al sistema',
             'data' => $seguimiento
         ]));
 
@@ -241,7 +241,7 @@ class SeguimientoController
         if (!$seguimiento) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Seguimiento no encontrado'
+                'message' => 'Seguimiento no encontrado, verificalo por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -251,7 +251,7 @@ class SeguimientoController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Seguimiento eliminado correctamente'
+            'message' => 'Seguimiento eliminado correctamente, cargado al sistema'
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');

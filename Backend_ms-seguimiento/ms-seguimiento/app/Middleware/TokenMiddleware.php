@@ -17,7 +17,7 @@ class TokenMiddleware
             $response = new Response();
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Token no proporcionado. Inicie sesión.'
+                'message' => 'Token no proporcionado, por favor inicie sesion'
             ]));
             return $response->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');
@@ -36,7 +36,7 @@ class TokenMiddleware
             $response = new Response();
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Token inválido o sesión expirada'
+                'message' => 'Token invalido o sesion expirada, por favor intenta nuevamente'
             ]));
             return $response->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');
