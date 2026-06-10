@@ -16,7 +16,6 @@ class Database
 
         self::$capsule = new Capsule();
 
-        // Configurar conexión MySQL con datos del .env
         self::$capsule->addConnection([
             'driver'    => 'mysql',
             'host'      => $_ENV['DB_HOST']      ?? 'localhost',
@@ -30,7 +29,6 @@ class Database
 
         self::$capsule->setAsGlobal();
         
-        // Inicializa Eloquent ORM
         self::$capsule->bootEloquent();
     }
     

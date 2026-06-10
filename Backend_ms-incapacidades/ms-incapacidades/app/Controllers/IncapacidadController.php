@@ -73,7 +73,7 @@ class IncapacidadController
         if (!$incapacidad) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Incapacidad no encontrada'
+                'message' => 'Incapacidad no encontrada, intenta nuevamente'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -108,7 +108,7 @@ class IncapacidadController
         if (!in_array($data['tipo'], $tiposPermitidos)) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Tipo de incapacidad inválido'
+                'message' => 'Tipo de incapacidad invalido, intenta nuevamente'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -120,7 +120,7 @@ class IncapacidadController
         if (!$fechaInicio || !$fechaFin) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Formato de fecha inválido. Use YYYY-MM-DD'
+                'message' => 'Formato de fecha invalido, Use el formato YYYY-MM-DD'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -129,7 +129,7 @@ class IncapacidadController
         if ($fechaFin < $fechaInicio) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'La fecha fin no puede ser menor a la fecha inicio'
+                'message' => 'La fecha fin no puede ser menor a la fecha inicio, intenta nuevamente'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -138,7 +138,7 @@ class IncapacidadController
         if (!$this->validarEmpleado((int)$data['empleado_id'], $token)) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'El empleado no existe'
+                'message' => 'El empleado no existe, rectificalo en el sistema'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -158,7 +158,7 @@ class IncapacidadController
         if ($existe) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Ya existe una incapacidad para este empleado en el rango de fechas indicado'
+                'message' => 'Ya existe una incapacidad para este empleado en el rango de fechas indicado, no se permite duplicado'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -180,7 +180,7 @@ class IncapacidadController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Incapacidad registrada exitosamente',
+            'message' => 'Incapacidad registrada exitosamente, cargada al sistema',
             'data' => $incapacidad
         ]));
 
@@ -195,7 +195,7 @@ class IncapacidadController
         if (!$incapacidad) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Incapacidad no encontrada'
+                'message' => 'Incapacidad no encontrada, por favor verificala'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -204,7 +204,7 @@ class IncapacidadController
         if ($incapacidad->estado === 'finalizada') {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'No se puede editar una incapacidad finalizada'
+                'message' => 'No se puede editar una incapacidad finalizada, el sistema ya se cargo'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -219,7 +219,7 @@ class IncapacidadController
             if (!$fechaInicio || !$fechaFin) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'Formato de fecha inválido. Use YYYY-MM-DD'
+                    'message' => 'Formato de fecha invalido, por favor usa YYYY-MM-DD'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -228,7 +228,7 @@ class IncapacidadController
             if ($fechaFin < $fechaInicio) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'La fecha fin no puede ser menor a la fecha inicio'
+                    'message' => 'La fecha fin no puede ser menor a la fecha inicio, por favor prueba en otro rango'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -249,7 +249,7 @@ class IncapacidadController
             if ($existe) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'Ya existe una incapacidad para este empleado en el rango de fechas indicado'
+                    'message' => 'Ya existe una incapacidad para este empleado en el rango de fechas indicado, no se permite duplicados'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -281,7 +281,7 @@ class IncapacidadController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Incapacidad actualizada exitosamente',
+            'message' => 'Incapacidad actualizada exitosamente, por favor corrobora en el sistema',
             'data' => $incapacidad
         ]));
 
@@ -295,7 +295,7 @@ class IncapacidadController
         if (!$incapacidad) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Incapacidad no encontrada'
+                'message' => 'Incapacidad no encontrada, por favor verifica bien'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -318,7 +318,7 @@ class IncapacidadController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Estado actualizado correctamente',
+            'message' => 'Estado actualizado correctamente, felicitaciones',
             'data' => $incapacidad
         ]));
 
@@ -332,7 +332,7 @@ class IncapacidadController
         if (!$incapacidad) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Incapacidad no encontrada'
+                'message' => 'Incapacidad no encontrada, verificala por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -341,7 +341,7 @@ class IncapacidadController
         if ($incapacidad->estado === 'finalizada') {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'La incapacidad ya está finalizada'
+                'message' => 'La incapacidad ya está finalizada, ya esta cargada en el sistema'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -352,7 +352,7 @@ class IncapacidadController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Incapacidad finalizada exitosamente',
+            'message' => 'Incapacidad finalizada exitosamente, ya quedo cargada al sistema',
             'data' => $incapacidad
         ]));
 
@@ -366,7 +366,7 @@ class IncapacidadController
         if (!$incapacidad) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Incapacidad no encontrada'
+                'message' => 'Incapacidad no encontrada, verificala por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -376,7 +376,7 @@ class IncapacidadController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Incapacidad eliminada correctamente'
+            'message' => 'Incapacidad eliminada correctamente, ya quedo cargada al sistema'
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');

@@ -4,11 +4,9 @@ Authorization: Bearer TU_TOKEN
 GET http://127.0.0.1:8003/api/incapacidades?estado=aprobada
 Authorization: Bearer TU_TOKEN
 
-### Ver incapacidad
 GET http://127.0.0.1:8003/api/incapacidades/1
 Authorization: Bearer TU_TOKEN
 
-### Crear incapacidad
 POST http://127.0.0.1:8003/api/incapacidades
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN

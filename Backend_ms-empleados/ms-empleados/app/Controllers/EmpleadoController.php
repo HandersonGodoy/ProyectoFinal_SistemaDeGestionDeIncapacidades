@@ -43,7 +43,7 @@ class EmpleadoController
         if (!$empleado) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Empleado no encontrado'
+                'message' => 'Empleado no encontrado, vuelve a intentarlo'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -66,7 +66,7 @@ class EmpleadoController
             if (empty($data[$campo])) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => "El campo {$campo} es obligatorio"
+                    'message' => "El campo {$campo} es obligatorio, por favor agregalo"
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -78,7 +78,7 @@ class EmpleadoController
         if ($fechaIngreso > $hoy) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'La fecha de ingreso no puede ser futura'
+                'message' => 'La fecha de ingreso no puede ser futura, intenta una fecha reciente'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -87,7 +87,7 @@ class EmpleadoController
         if (Empleado::where('documento', $data['documento'])->exists()) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'El documento ya está registrado'
+                'message' => 'El documento ya está registrado, por favor revisalo en el sistema'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -96,7 +96,7 @@ class EmpleadoController
         if (Empleado::where('correo', $data['correo'])->exists()) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'El correo ya está registrado'
+                'message' => 'El correo ya está registrado, por favor revisalo en el sistema'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
@@ -106,7 +106,7 @@ class EmpleadoController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Empleado creado exitosamente',
+            'message' => 'Empleado creado exitosamente, por favor verificalo en el sistema',
             'data' => $empleado
         ]));
 
@@ -121,7 +121,7 @@ class EmpleadoController
         if (!$empleado) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Empleado no encontrado'
+                'message' => 'Empleado no encontrado, crealo por favor'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -135,7 +135,7 @@ class EmpleadoController
             if ($fechaIngreso > $hoy) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'La fecha de ingreso no puede ser futura'
+                    'message' => 'La fecha de ingreso no puede ser futura, prueba con una reciente'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -146,7 +146,7 @@ class EmpleadoController
             if (Empleado::where('documento', $data['documento'])->exists()) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'El documento ya está registrado en otro empleado'
+                    'message' => 'El documento ya está registrado en otro empleado, no se permite duplicados'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -157,7 +157,7 @@ class EmpleadoController
             if (Empleado::where('correo', $data['correo'])->exists()) {
                 $response->getBody()->write(json_encode([
                     'success' => false,
-                    'message' => 'El correo ya está registrado en otro empleado'
+                    'message' => 'El correo ya está registrado en otro empleado, no se permite duplicados'
                 ]));
                 return $response->withStatus(400)
                     ->withHeader('Content-Type', 'application/json');
@@ -168,7 +168,7 @@ class EmpleadoController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Empleado actualizado exitosamente',
+            'message' => 'Empleado actualizado exitosamente, verificalo en sistema',
             'data' => $empleado
         ]));
 
@@ -182,7 +182,7 @@ class EmpleadoController
         if (!$empleado) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Empleado no encontrado'
+                'message' => 'Empleado no encontrado, haz una busqueda exhaustiva'
             ]));
             return $response->withStatus(404)
                 ->withHeader('Content-Type', 'application/json');
@@ -194,7 +194,7 @@ class EmpleadoController
         if (!in_array($nuevoEstado, ['activo', 'inactivo'])) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Estado inválido. Use: activo o inactivo'
+                'message' => 'Estado inválido. Use: activo o inactivo por favor'
             ]));
             return $response->withStatus(400)
                 ->withHeader('Content-Type', 'application/json');
