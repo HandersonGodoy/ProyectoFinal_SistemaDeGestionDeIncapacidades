@@ -29,7 +29,6 @@ class Database
 
         self::$capsule->setAsGlobal();
         
-        // Inicializa Eloquent ORM
         self::$capsule->bootEloquent();
     }
     

@@ -19,7 +19,7 @@ class AuthMiddleware
             $response = new Response();
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Token no proporcionado'
+                'message' => 'Token no proporcionado, incorrecto'
             ]));
             return $response->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');
@@ -33,7 +33,7 @@ class AuthMiddleware
             $response = new Response();
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Token inválido o sesión expirada'
+                'message' => 'Token invalido o sesión expirada, intentalo de nuevo'
             ]));
             return $response->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');

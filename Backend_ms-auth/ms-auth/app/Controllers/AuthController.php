@@ -23,7 +23,7 @@ class AuthController
         if ($usuario->estado !== 'activo') {
     $response->getBody()->write(json_encode([
         'success' => false,
-        'message' => 'Usuario inactivo. Contacte al administrador.'
+        'message' => 'Usuario inactivo, se necesita contaco al sistema'
     ]));
     return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
 }
@@ -31,7 +31,7 @@ class AuthController
         if (!$usuario || $usuario->contrasena !== $contrasena) {
             $response->getBody()->write(json_encode([
                 'success' => false,
-                'message' => 'Credenciales incorrectas'
+                'message' => 'Credenciales incorrectas, vuelve a intentar'
             ]));
             return $response->withStatus(401)
                 ->withHeader('Content-Type', 'application/json');
@@ -45,7 +45,7 @@ class AuthController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Login exitoso',
+            'message' => 'Login exitoso, bienvenido',
             'token' => $token,
             'usuario' => [
                 'id' => $usuario->id,
@@ -72,7 +72,7 @@ class AuthController
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Sesión cerrada correctamente'
+            'message' => 'Sesión cerrada correctamente, lo esperamos pronto'
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');
@@ -82,7 +82,7 @@ class AuthController
     {
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Token válido y sesión activa'
+            'message' => 'Token válido y sesión activa, bienvenido'
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');
