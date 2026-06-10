@@ -1,51 +1,47 @@
-# Sistema de Gestion de Incapacidades Medicas - Corporate Solutions
+Sistema de Gestion de Incapacidades Medicas - Corporate Solutions
 
-## Descripcion
-Sistema web distribuido basado en microservicios para la gestion de incapacidades medicas empresariales. Desarrollado con PHP 8+, Slim Framework, Eloquent ORM y JavaScript Vanilla.
+- Descripcion: Sistema web distribuido basado en microservicios para la gestion de incapacidades medicas empresariales. Desarrollado con PHP 8+, Slim Framework, Eloquent ORM y JavaScript Vanilla.
 
-## Requisitos Previos
+
+-Requisitos Previos
 
 - PHP 8.0 o superior (incluido en XAMPP)
 - Composer (https://getcomposer.org/)
 - MySQL / XAMPP (https://www.apachefriends.org/)
 - Navegador web
 
-## Instalacion en CUALQUIER PC (Windows)
 
-### Paso 1: Descargar los dos repositorios de GitHub
+- Instalacion en CUALQUIER PC 
 
-```bash
-git clone https://github.com/tu-usuario/backend-incapacidades.git
-git clone https://github.com/tu-usuario/frontend-incapacidades.git
-```
+Paso 1: Descargar los dos repositorios de GitHub
 
-### Paso 2: Colocar los archivos .bat
+Paso 2: Colocar los archivos .bat
 
 Copia estos archivos en la carpeta raiz del **backend**:
 - `Instalar.bat`
 - `INICIAR_SERVIDORES.bat`
 
-### Paso 3: Ejecutar Instalar.bat
+Paso 3: Ejecutar Instalar.bat
 
 1. Doble clic en **`Instalar.bat`**
 2. El sistema detectara automaticamente las rutas
 3. Si no encuentra el frontend, te pedira que arrastres la carpeta
 4. Espera a que termine (instala Composer y crea bases de datos)
 
-### Paso 4: Ejecutar INICIAR_SERVIDORES.bat
+Paso 4: Ejecutar INICIAR_SERVIDORES.bat
 
 1. Doble clic en **`INICIAR_SERVIDORES.bat`**
 2. Se abriran 5 ventanas de comandos automaticamente
 3. Espera 15 segundos a que todos inicien
 
-### Paso 5: Abrir el sistema
+Paso 5: Abrir el sistema
 
 En tu navegador, ve a:
 ```
 http://127.0.0.1:8080
 ```
 
-## Credenciales de Prueba
+Credenciales de Prueba
 
 | Usuario | Contrasena | Rol | Estado |
 |---------|-----------|-----|--------|
@@ -53,7 +49,7 @@ http://127.0.0.1:8080
 | gestionhumana | gh123 | gestion_humana | activo |
 | inactivo | inactivo123 | empleado | inactivo (no entra) |
 
-## Como funciona la deteccion automatica
+Como funciona la deteccion automatica
 
 Los archivos `.bat` detectan automaticamente:
 1. **Backend**: La carpeta donde esta el propio `.bat`
@@ -64,50 +60,50 @@ Los archivos `.bat` detectan automaticamente:
 
 Si no lo encuentra, te pide que arrastres la carpeta manualmente.
 
-## Si algo falla
 
-### "No se encontro el frontend"
+
+Si algo falla:
+
+"No se encontro el frontend"
 - Arrastra la carpeta `frontend-incapacidades` cuando te lo pida
 - O mueve el frontend dentro de la carpeta del backend
 
-### "PHP no encontrado"
+"PHP no encontrado"
 - Instala XAMPP desde https://www.apachefriends.org/
 - Reinicia la PC despues de instalar
 
-### "Composer no encontrado"
+"Composer no encontrado"
 - Descarga desde https://getcomposer.org/download/
 - Instala y reinicia la PC
 
-### MySQL no conecta
+MySQL no conecta
 - Abre XAMPP Control Panel
 - Dale "Start" a MySQL
 - Verifica que el puerto 3306 no este ocupado
 
-## Estructura esperada
+
+
+Estructura esperada
 
 ```
 Cualquier carpeta\
-├── Instalar.bat              <- Aqui
-├── INICIAR_SERVIDORES.bat    <- Aqui
+├── Instalar.bat              
+├── INICIAR_SERVIDORES.bat    
 ├── README.md
 ├── setup.sql
 ├── Backend_ms-auth\
 ├── Backend_ms-empleados\
 ├── Backend_ms-incapacidades\
 ├── Backend_ms-seguimiento\
-└── frontend_incapacidades\    <- Puede estar aqui o al lado
-    └── frontend-incapacidades\
-        ├── index.html
-        └── ...
-```
 
-## Instalacion Manual (si el .bat falla)
+
+Instalacion Manual (si el .bat falla)
 
 Ver la seccion "Instalacion Manual" del README anterior.
 
-## Autor
-[Nombre del estudiante]
-[Correo institucional]
+Handerson Fabian Blanco Godoy
+55224512
+hfblanco@uniboyaca.edu.co
 
-## Fecha
-Junio 2026
+Fecha
+09 Junio 2026

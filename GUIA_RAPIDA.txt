@@ -3,27 +3,46 @@ GUIA RAPIDA - Sistema de Gestion de Incapacidades
 
 FUNCIONA EN CUALQUIER PC - DETECCION AUTOMATICA
 
-1. DESCARGAR DE GITHUB
-   git clone [repo-backend]
-   git clone [repo-frontend]
-
-2. COPIAR ARCHIVOS .bat
+1. COPIAR ARCHIVOS .bat
    Copia Instalar.bat e INICIAR_SERVIDORES.bat
    a la carpeta raiz del backend
 
-3. INSTALAR (doble clic)
+2. INSTALAR (doble clic)
    Instalar.bat
-   -> Detecta rutas automaticamente
-   -> Si no encuentra el frontend, arrastra la carpeta
+   -Detecta rutas automaticamente
+   -Si no encuentra el frontend, arrastra la carpeta
 
-4. INICIAR (doble clic)
+3. INICIAR (doble clic)
    INICIAR_SERVIDORES.bat
-   -> Abre 5 ventanas automaticamente
+   -Abre 5 ventanas automáticamente
 
-5. ABRIR NAVEGADOR
+Activar Servers:
+
+# Terminal 1
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-auth\ms-auth
+php -S 127.0.0.1:8001 -t public
+
+# Terminal 2
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-empleados\ms-empleados
+php -S 127.0.0.1:8002 -t public
+
+# Terminal 3
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-incapacidades\ms-incapacidades
+php -S 127.0.0.1:8003 -t public
+
+# Terminal 4
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades\Backend_ms-seguimiento\ms-seguimiento
+php -S 127.0.0.1:8004 -t public
+
+# Terminal 5
+cd C:\Users\blanc\ProyectoFinal_SistemaDeGestionDeIncapacidades_Frontend\frontend_incapacidades\frontend-incapacidades
+php -S localhost:8080
+
+
+4. ABRIR NAVEGADOR
    http://127.0.0.1:8080
 
-6. LOGIN
+5. LOGIN
    admin / admin123
 
 ================================================
