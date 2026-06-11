@@ -18,6 +18,8 @@ return function ($app) {
         
         $group->patch('/{id}/estado', [EmpleadoController::class, 'cambiarEstado']);
         
+        $group->delete('/{id}', [EmpleadoController::class, 'destroy']);
+        
     })->add(TokenMiddleware::class);
     
 };

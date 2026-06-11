@@ -10,15 +10,26 @@ class SeguimientoController
 {
     private function validarIncapacidad(int $incapacidadId, string $token): bool
     {
-        $url = ($_ENV['MS_INCAPACIDADES_URL'] ?? 'http://127.0.0.1:8003') . "/api/incapacidades/{$incapacidadId}";
+        $baseUrl = rtrim($_ENV['MS_INCAPACIDADES_URL'] ?? 'http://127.0.0.1:8003', '/');
+        $url = $baseUrl . "/api/incapacidades/{$incapacidadId}";
+        
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer {$token}"]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer {$token}",
+            "Accept: application/json"
+        ]);
+        
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); 
+        
         curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $httpCode === 200;
+        
+        return $httpCode >= 200 && $httpCode < 300;
     }
 
     public function index(Request $request, Response $response): Response
@@ -35,7 +46,7 @@ class SeguimientoController
         }
 
         if (!empty($queryParams['fecha'])) {
-            $query->where('fecha', $queryParams['fecha']);
+            $query->where('fecha', 'LIKE', $queryParams['fecha'] . '%');
         }
 
         if (!empty($queryParams['usuario_responsable'])) {

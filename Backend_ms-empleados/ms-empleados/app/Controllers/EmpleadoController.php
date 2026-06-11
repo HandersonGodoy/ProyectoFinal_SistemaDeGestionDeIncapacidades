@@ -211,4 +211,27 @@ class EmpleadoController
 
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+    public function destroy(Request $request, Response $response, array $args): Response
+    {
+        $empleado = Empleado::find($args['id']);
+
+        if (!$empleado) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'Empleado no encontrado, no se puede eliminar'
+            ]));
+            return $response->withStatus(404)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
+        $empleado->delete();
+
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'message' => 'Empleado eliminado exitosamente'
+        ]));
+
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }
