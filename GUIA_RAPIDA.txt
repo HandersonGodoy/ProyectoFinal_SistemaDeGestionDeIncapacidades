@@ -1,18 +1,17 @@
-GUIA RAPIDA - Sistema de Gestion de Incapacidades
-================================================
+GUIA 
 
-FUNCIONA EN CUALQUIER PC - DETECCION AUTOMATICA
+-DETECCION AUTOMATICA
 
 1. COPIAR ARCHIVOS .bat
    Copia Instalar.bat e INICIAR_SERVIDORES.bat
    a la carpeta raiz del backend
 
-2. INSTALAR (doble clic)
+2. INSTALAR 
    Instalar.bat
    -Detecta rutas automaticamente
-   -Si no encuentra el frontend, arrastra la carpeta
+   -Si no encuentra el frontend se arrastra la carpeta
 
-3. INICIAR (doble clic)
+3. INICIAR 
    INICIAR_SERVIDORES.bat
    -Abre 5 ventanas automáticamente
 
@@ -44,7 +43,5 @@ php -S localhost:8080
 
 5. LOGIN
    admin / admin123
-
-================================================
-NO NECESITAS EDITAR NINGUNA RUTA
-================================================
+   gestionhumana / gh123
+   inactivo / inactivo123

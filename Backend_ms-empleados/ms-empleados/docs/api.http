@@ -1,9 +1,18 @@
+# Obtiene la lista de empleados registrados, permitiendo aplicar filtros opcionales de búsqueda por documento, área o cargo mediante parámetros en la URL
 GET http://127.0.0.1:8002/api/empleados
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Recupera la información detallada de un empleado específico utilizando su ID, retornando un estado 404 si el registro no existe en el sistema
 GET http://127.0.0.1:8002/api/empleados/1
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Crea un nuevo empleado en el sistema, validando obligatoriamente todos los campos técnicos, que la fecha de ingreso no sea futura y que el documento y correo sean únicos
 POST http://127.0.0.1:8002/api/empleados
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
@@ -19,6 +28,10 @@ Authorization: Bearer TU_TOKEN
     "fecha_ingreso": "2025-03-01"
 }
 
+
+###
+
+# Actualiza de forma parcial o total los datos de un empleado existente, verificando que la fecha no sea futura y evitando duplicar el documento o correo con otros empleados
 PUT http://127.0.0.1:8002/api/empleados/1
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
@@ -27,6 +40,10 @@ Authorization: Bearer TU_TOKEN
     "cargo": "Senior Analista"
 }
 
+
+###
+
+# Modifica de manera exclusiva el estado laboral del empleado, validando de forma estricta que los únicos valores permitidos sean 'activo' o 'inactivo'
 PATCH http://127.0.0.1:8002/api/empleados/1/estado
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN

@@ -1,3 +1,4 @@
+# Autentica las credenciales del usuario (mediante nombre de usuario o correo electrónico) y genera un token de acceso único, siempre y cuando la cuenta se encuentre en estado activo
 POST http://127.0.0.1:8001/api/auth/login
 Content-Type: application/json
 
@@ -6,8 +7,16 @@ Content-Type: application/json
     "contrasena": "admin123"
 }
 
+
+###
+
+# Verifica a través del middleware de autenticación que el token proporcionado sea válido y que el usuario mantenga una sesión activa en el sistema
 GET http://127.0.0.1:8001/api/auth/validar
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Cierra la sesión activa del usuario, invalidando y eliminando el token de acceso en la base de datos y cambiando el estado de la sesión a inactiva
 POST http://127.0.0.1:8001/api/auth/logout
 Authorization: Bearer TU_TOKEN

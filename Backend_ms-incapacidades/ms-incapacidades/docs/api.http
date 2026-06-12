@@ -1,12 +1,25 @@
+# Obtiene la lista general de incapacidades registradas, permitiendo aplicar filtros opcionales en la URL como el ID del empleado o criterios de fecha.
 GET http://127.0.0.1:8003/api/incapacidades
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Recupera la lista de incapacidades filtradas específicamente por su estado administrativo actual (por ejemplo: 'aprobada', 'en_revision', 'rechazada').
 GET http://127.0.0.1:8003/api/incapacidades?estado=aprobada
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Recupera la información detallada de una incapacidad específica mediante su ID único, retornando un estado 404 si el registro no existe en el sistema.
 GET http://127.0.0.1:8003/api/incapacidades/1
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Registra una nueva incapacidad en el sistema, validando mediante cURL que el empleado exista en su microservicio, que la fecha de inicio no supere a la de fin y que no existan cruces de fechas con otras incapacidades del mismo empleado.
 POST http://127.0.0.1:8003/api/incapacidades
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
@@ -21,6 +34,10 @@ Authorization: Bearer TU_TOKEN
     "observaciones": "Reposo absoluto"
 }
 
+
+###
+
+# Actualiza de forma parcial o total los datos de una incapacidad existente manteniendo los criterios de validación de fechas y cruces de agenda.
 PUT http://127.0.0.1:8003/api/incapacidades/3
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
@@ -30,6 +47,10 @@ Authorization: Bearer TU_TOKEN
     "estado": "en_revision"
 }
 
+
+###
+
+# Modifica de manera exclusiva el estado administrativo de la incapacidad (ej. 'aprobada', 'en_revision', 'rechazada') evaluando el flujo de auditoría correspondiente.
 PATCH http://127.0.0.1:8003/api/incapacidades/3/estado
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
@@ -38,8 +59,16 @@ Authorization: Bearer TU_TOKEN
     "estado": "aprobada"
 }
 
+
+###
+
+# Modifica el estado de la incapacidad a 'finalizada', bloqueando el registro para evitar cualquier modificación posterior y consolidándolo formalmente en el sistema.
 PATCH http://127.0.0.1:8003/api/incapacidades/3/finalizar
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Elimina permanentemente el registro de la incapacidad especificada por su ID, liberando los días bloqueados en la agenda del empleado si el registro existía.
 DELETE http://127.0.0.1:8003/api/incapacidades/3
 Authorization: Bearer TU_TOKEN

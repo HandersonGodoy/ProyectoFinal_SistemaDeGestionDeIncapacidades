@@ -1,21 +1,46 @@
+# Obtiene la lista general de seguimientos registrados, permitiendo aplicar filtros opcionales en la URL como incapacidad_id, estado, fecha o usuario_responsable.
 GET http://127.0.0.1:8004/api/seguimientos
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Filtra la lista de seguimientos específicamente por el identificador de una incapacidad para consultar su historial completo de evolución.
 GET http://127.0.0.1:8004/api/seguimientos?incapacidad_id=1
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Recupera los seguimientos filtrados de acuerdo a su estado administrativo actual (por ejemplo: 'en_revision', 'aprobada').
 GET http://127.0.0.1:8004/api/seguimientos?estado=aprobada
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Filtra y consulta los registros de seguimiento realizados en una fecha específica del calendario.
 GET http://127.0.0.1:8004/api/seguimientos?fecha=2026-06-01
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Obtiene los registros de seguimiento asignados o realizados por un usuario administrativo responsable específico.
 GET http://127.0.0.1:8004/api/seguimientos?usuario_responsable=admin
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Recupera la información detallada de un seguimiento individual mediante su ID único, retornando un estado 404 si el registro no existe en el sistema.
 GET http://127.0.0.1:8004/api/seguimientos/1
 Authorization: Bearer TU_TOKEN
 
+
+###
+
+# Registra un nuevo seguimiento en el sistema, validando obligatoriamente mediante cURL que la incapacidad relacionada exista en su respectivo microservicio antes de crear el registro.
 POST http://127.0.0.1:8004/api/seguimientos
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
@@ -28,22 +53,33 @@ Authorization: Bearer TU_TOKEN
     "usuario_responsable": "gestionhumana"
 }
 
-PUT http://127.0.0.1:8004/api/seguimientos/4
+
+###
+
+# Actualiza de forma parcial o total los datos de una anotación de seguimiento existente utilizando su ID.
+PUT http://127.0.0.1:8004/api/seguimientos/1
 Content-Type: application/json
 Authorization: Bearer TU_TOKEN
 
 {
-    "comentario": "Comentario actualizado",
+    "comentario": "Comentario actualizado y verificado"
+}
+
+
+###
+
+# Modifica de manera exclusiva el estado del seguimiento, evaluando de forma estricta que el nuevo valor sea válido dentro de las reglas de negocio establecidas.
+PATCH http://127.0.0.1:8004/api/seguimientos/1/estado
+Content-Type: application/json
+Authorization: Bearer TU_TOKEN
+
+{
     "estado": "aprobada"
 }
 
-PATCH http://127.0.0.1:8004/api/seguimientos/4/estado
-Content-Type: application/json
-Authorization: Bearer TU_TOKEN
 
-{
-    "estado": "finalizada"
-}
+###
 
-DELETE http://127.0.0.1:8004/api/seguimientos/4
+# Elimina permanentemente el registro de seguimiento especificado por su ID, liberándolo del historial del sistema y retornando 404 si el registro no es encontrado.
+DELETE http://127.0.0.1:8004/api/seguimientos/1
 Authorization: Bearer TU_TOKEN
